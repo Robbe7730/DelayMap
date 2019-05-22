@@ -2,6 +2,9 @@ import pygtfs
 import datetime
 import requests
 from google.transit import gtfs_realtime_pb2
+import pytz
+
+tz = pytz.timezone('Europe/Berlin')
 
 from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__)
@@ -28,7 +31,10 @@ def trains():
     response = requests.get("https://sncb-opendata.hafas.de/gtfs/realtime/c21ac6758dd25af84cca5b707f3cb3de", allow_redirects=True)
     feed.ParseFromString(response.content)
     for entity in feed.entity:
-        trip = schedule.trips_by_id(entity.trip_update.trip.trip_id)[0]
+        trips = schedule.trips_by_id(entity.trip_update.trip.trip_id)
+        if len(trips) == 0:
+            continue
+        trip = trips[0]
         current_delay = 0
         delays = {}
 
@@ -47,7 +53,7 @@ def trains():
 
             arrival_time = datetime.time(arrival_seconds // 3600, (arrival_seconds // 60) % 60, arrival_seconds % 60)
             departure_time = datetime.time(departure_seconds // 3600, (departure_seconds // 60) % 60, departure_seconds % 60)
-            current_time = datetime.datetime.now().time()
+            current_time = datetime.datetime.now(tz).time()
 
             if prev_departure_time == None:
                 prev_departure_time = arrival_time
