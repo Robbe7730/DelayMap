@@ -31,7 +31,7 @@ function clear() {
 }
 
 function drawTrain(train) {
-    if (train.delay >= 300) {
+    if (train.delay >= 360) {
         ctx.fillStyle = "#FF0000";
     } else if (train.delay > 0) {
         ctx.fillStyle = "#FF9F00";
