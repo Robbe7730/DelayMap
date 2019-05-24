@@ -42,12 +42,12 @@ function getTrains() {
 function drawTrains(trains) {
     clear();
     trains.forEach(drawTrain);
-    drawLegenda();
 }
 
 function onLoad() {
     canvas = document.getElementById("field");
     ctx = canvas.getContext("2d");
+    clear();
     getTrains();
     interval = setInterval(getTrains, 5000);
 }
@@ -56,6 +56,7 @@ function clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.stroke();
     ctx.drawImage(img, 0, 0);
+    drawLegenda();
 }
 
 function drawTrain(train) {
