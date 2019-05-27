@@ -30,6 +30,7 @@ function drawLegenda() {
     ctx.font = "bold 18px Arial";
     ctx.fillText("Legenda", WIDTH - legendaWidth + 20, currTextHeight+=textHeight);
     ctx.font = "16px Arial";
+    ctx.fillStyle = "#000000";
     ctx.fillText("Green: No delay", WIDTH - legendaWidth + 20, currTextHeight+=textHeight);
     ctx.fillText("Orange: >" + delay_legenda.orange + " minutes", WIDTH - legendaWidth + 20, currTextHeight+=textHeight);
     ctx.fillText("Red: >" + delay_legenda.red + " minutes", WIDTH - legendaWidth + 20, currTextHeight+=textHeight);
