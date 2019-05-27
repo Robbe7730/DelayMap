@@ -83,7 +83,7 @@ def trains():
                 if total == 0:
                     percentage = 1
                 else:
-                    percentage = current / total
+                    percentage = 1 - (current / total)
 
                 delta_lat = (next_stop_lat - prev_stop_lat) * percentage
                 delta_lon = (next_stop_lon - prev_stop_lon) * percentage
