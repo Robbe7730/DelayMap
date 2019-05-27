@@ -10,18 +10,18 @@ from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__)
 
 
-@app.route("/")
-@app.route("/index.html")
+@app.route("/old/")
+@app.route("/old/index.html")
 def index():
-    return send_from_directory("public", "index.html")
+    return send_from_directory("old_public", "index.html")
 
-@app.route("/server.js")
+@app.route("/old/server.js")
 def server():
-    return send_from_directory("public", "server.js")
+    return send_from_directory("old_public", "server.js")
 
 @app.route("/background.png")
 def background():
-    return send_from_directory("public", "background.png")
+    return send_from_directory("old_public", "background.png")
 
 @app.route("/trains.json")
 def trains():
