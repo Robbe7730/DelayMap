@@ -23,7 +23,7 @@ function addLegend(map) {
   div.innerHTML = "<strong>Legend</strong><br>" +
                   'Green: No delay <br>' + 
                   'Orange: 6 minutes or less <br>' +
-                  'Red: More than 6 minutes delay <br>';
+                  'Red: More than 6 minutes <br>';
 
   return div;
 }
@@ -43,7 +43,7 @@ function drawTrain(train) {
   const color = train.delay == 0 ? "green" : (train.delay < 360 ? "orange" : "red")
   const trainMarker = L.divIcon({
     html: `<i class="fa fa-train" style="color: ${color}"></i>`,
-    iconSize: [40, 40],
+    iconSize: [20, 20],
     className: 'myDivIcon',
     popupAnchor: [-15,-15]
   })

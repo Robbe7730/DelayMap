@@ -82,6 +82,8 @@ def trains():
                 current = arrival_seconds - seconds(current_time)
                 if total == 0:
                     percentage = 1
+                elif seconds(current_time) < seconds(prev_departure_time):
+                    percentage = 0
                 else:
                     percentage = 1 - (current / total)
 
