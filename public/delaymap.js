@@ -11,8 +11,21 @@ function onLoad() {
   
   markers = L.layerGroup().addTo(map);
 
+  const legend = L.control({position: 'topright'});
+  legend.onAdd = addLegend;
+  legend.addTo(map);
   getTrains();
   interval = setInterval(getTrains, 5000);
+}
+
+function addLegend(map) {
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML = "<strong>Legend</strong><br>" +
+                  'Green: No delay <br>' + 
+                  'Orange: 6 minutes or less <br>' +
+                  'Red: More than 6 minutes delay <br>';
+
+  return div;
 }
 
 function getTrains() {

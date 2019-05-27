@@ -13,17 +13,13 @@ app = Flask(__name__)
 def index():
     return send_from_directory("public", "index.html")
 
+@app.route("/style.css")
+def style():
+    return send_from_directory("public", "style.css")
+
 @app.route("/delaymap.js")
 def javascript():
     return send_from_directory("public", "delaymap.js")
-
-@app.route("/css/leaflet.awesome-markers.css")
-def leaflet_markers_css():
-    return send_from_directory("public", "leaflet.awesome-markers.css")
-
-@app.route("/js/leaflet.awesome-markers.js")
-def leaflet_markers_js():
-    return send_from_directory("public", "leaflet.awesome-markers.js")
 
 @app.route("/old/")
 @app.route("/old/index.html")
