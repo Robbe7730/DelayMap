@@ -31,8 +31,15 @@ function drawTrain(train) {
   const trainMarker = L.divIcon({
     html: `<i class="fa fa-train" style="color: ${color}"></i>`,
     iconSize: [40, 40],
-    className: 'myDivIcon'
+    className: 'myDivIcon',
+    popupAnchor: [-15,-15]
   })
-  L.marker([train.lat, train.lon], {icon: trainMarker}).addTo(markers);
-  console.log(color);
+  const marker = L.marker([train.lat, train.lon], {icon: trainMarker}).addTo(markers);
+  marker.bindPopup(`${train.name}: +${train.delay/60} min`);
+  marker.on('mouseover', (e) => {
+    marker.openPopup();
+  });
+  marker.on('mouseout', (e) => {
+    marker.closePopup();
+  });
 }
