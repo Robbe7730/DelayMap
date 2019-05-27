@@ -9,18 +9,33 @@ tz = pytz.timezone('Europe/Berlin')
 from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    return send_from_directory("public", "index.html")
+
+@app.route("/delaymap.js")
+def javascript():
+    return send_from_directory("public", "delaymap.js")
+
+@app.route("/css/leaflet.awesome-markers.css")
+def leaflet_markers_css():
+    return send_from_directory("public", "leaflet.awesome-markers.css")
+
+@app.route("/js/leaflet.awesome-markers.js")
+def leaflet_markers_js():
+    return send_from_directory("public", "leaflet.awesome-markers.js")
 
 @app.route("/old/")
 @app.route("/old/index.html")
-def index():
+def old_index():
     return send_from_directory("old_public", "index.html")
 
 @app.route("/old/server.js")
-def server():
+def old_server():
     return send_from_directory("old_public", "server.js")
 
 @app.route("/background.png")
-def background():
+def old_background():
     return send_from_directory("old_public", "background.png")
 
 @app.route("/trains.json")
@@ -83,6 +98,7 @@ def trains():
                     "lon": prev_stop_lon + delta_lon,
                     "delay": current_delay 
                 })
+                break
 
             prev_departure_time = departure_time
             prev_stop = stop
