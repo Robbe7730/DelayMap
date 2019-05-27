@@ -92,7 +92,8 @@ def trains():
                     "name": translate(trip.trip_headsign, schedule),
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
-                    "delay": current_delay 
+                    "delay": current_delay,
+                    "nextStopName": translate(stop.stop_name, schedule),
                 })
                 break
 

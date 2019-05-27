@@ -48,7 +48,7 @@ function drawTrain(train) {
     popupAnchor: [-15,-15]
   })
   const marker = L.marker([train.lat, train.lon], {icon: trainMarker}).addTo(markers);
-  marker.bindPopup(`${train.name}: +${train.delay/60} min`);
+  marker.bindPopup(`<strong>${train.name}</strong>: +${train.delay/60} min<br>Next stop: ${train.nextStopName}`);
   marker.on('mouseover', (e) => {
     marker.openPopup();
   });
