@@ -93,7 +93,7 @@ def trains():
                 delta_lon = (next_stop_lon - prev_stop_lon) * percentage
 
                 ret.append({
-                    "name": trip.trip_headsign,
+                    "name": translate(trip.trip_headsign, schedule),
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
                     "delay": current_delay 
@@ -113,6 +113,12 @@ def updatedb():
         f.write(r.content)
     pygtfs.overwrite_feed(schedule, "rawdata.zip")
     return "ok"
+
+def translate(text, schedule):
+    trans_object = schedule.translations_query.filter_by(trans_id = text, lang = "nl").first()
+    if trans_object == None:
+        return text
+    return trans_object.translation
 
 def seconds(time):
     return (time.hour * 60 + time.minute) * 60 + time.second
