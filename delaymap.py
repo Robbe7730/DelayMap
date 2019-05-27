@@ -9,19 +9,30 @@ tz = pytz.timezone('Europe/Berlin')
 from flask import Flask, jsonify, send_from_directory
 app = Flask(__name__)
 
-
 @app.route("/")
-@app.route("/index.html")
 def index():
     return send_from_directory("public", "index.html")
 
-@app.route("/server.js")
-def server():
-    return send_from_directory("public", "server.js")
+@app.route("/style.css")
+def style():
+    return send_from_directory("public", "style.css")
+
+@app.route("/delaymap.js")
+def javascript():
+    return send_from_directory("public", "delaymap.js")
+
+@app.route("/old/")
+@app.route("/old/index.html")
+def old_index():
+    return send_from_directory("old_public", "index.html")
+
+@app.route("/old/server.js")
+def old_server():
+    return send_from_directory("old_public", "server.js")
 
 @app.route("/background.png")
-def background():
-    return send_from_directory("public", "background.png")
+def old_background():
+    return send_from_directory("old_public", "background.png")
 
 @app.route("/trains.json")
 def trains():
@@ -72,17 +83,19 @@ def trains():
                 if total == 0:
                     percentage = 1
                 else:
-                    percentage = current / total
+                    percentage = 1 - (current / total)
 
                 delta_lat = (next_stop_lat - prev_stop_lat) * percentage
                 delta_lon = (next_stop_lon - prev_stop_lon) * percentage
 
                 ret.append({
-                    "name": trip.trip_headsign,
+                    "name": translate(trip.trip_headsign, schedule),
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
-                    "delay": current_delay 
+                    "delay": current_delay,
+                    "nextStopName": translate(stop.stop_name, schedule),
                 })
+                break
 
             prev_departure_time = departure_time
             prev_stop = stop
@@ -97,6 +110,12 @@ def updatedb():
         f.write(r.content)
     pygtfs.overwrite_feed(schedule, "rawdata.zip")
     return "ok"
+
+def translate(text, schedule):
+    trans_object = schedule.translations_query.filter_by(trans_id = text, lang = "nl").first()
+    if trans_object == None:
+        return text
+    return trans_object.translation
 
 def seconds(time):
     return (time.hour * 60 + time.minute) * 60 + time.second
