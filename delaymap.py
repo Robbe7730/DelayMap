@@ -100,7 +100,7 @@ def trains():
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
                     "delay": current_arrive_delay,
-                    "nextStopName": translate(stop.stop_name, schedule),
+                    "nextStopName": translate(prev_stop.stop_name, schedule),
                 })
                 break
 
