@@ -46,21 +46,26 @@ def trains():
         if len(trips) == 0:
             continue
         trip = trips[0]
-        current_delay = 0
-        delays = {}
+        current_arrive_delay = 0
+        current_depart_delay = 0
+        depart_delays = {}
+        arrive_delays = {}
 
         for stop_time_update in entity.trip_update.stop_time_update:
-            delays[stop_time_update.stop_id] = stop_time_update.arrival.delay
+            arrive_delays[stop_time_update.stop_id] = stop_time_update.arrival.delay
+            depart_delays[stop_time_update.stop_id] = stop_time_update.departure.delay
 
         prev_departure_time = None
         prev_stop = None
         for stop_time in trip.stop_times:
             stop = stop_time.stop
-            if stop.stop_id in delays:
-                current_delay = delays[stop.stop_id]
+            if stop.stop_id in arrive_delays:
+                current_arrive_delay = arrive_delays[stop.stop_id]
+            if stop.stop_id in depart_delays:
+                current_depart_delay = depart_delays[stop.stop_id]
 
-            arrival_seconds = stop_time.arrival_time.seconds
-            departure_seconds = stop_time.departure_time.seconds
+            arrival_seconds = stop_time.arrival_time.seconds + current_arrive_delay
+            departure_seconds = stop_time.departure_time.seconds + current_depart_delay 
 
             arrival_time = datetime.time(arrival_seconds // 3600, (arrival_seconds // 60) % 60, arrival_seconds % 60)
             departure_time = datetime.time(departure_seconds // 3600, (departure_seconds // 60) % 60, departure_seconds % 60)
@@ -94,7 +99,7 @@ def trains():
                     "name": translate(trip.trip_headsign, schedule),
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
-                    "delay": current_delay,
+                    "delay": current_arrive_delay,
                     "nextStopName": translate(stop.stop_name, schedule),
                 })
                 break
