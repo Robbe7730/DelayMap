@@ -65,17 +65,17 @@ def trains():
                 current_depart_delay = depart_delays[stop.stop_id]
 
             arrival_seconds = stop_time.arrival_time.seconds + current_arrive_delay
-            departure_seconds = stop_time.departure_time.seconds + current_depart_delay 
+            departure_seconds = stop_time.departure_time.seconds + current_depart_delay
 
             arrival_time = datetime.time(arrival_seconds // 3600, (arrival_seconds // 60) % 60, arrival_seconds % 60)
             departure_time = datetime.time(departure_seconds // 3600, (departure_seconds // 60) % 60, departure_seconds % 60)
             current_time = datetime.datetime.now(tz).time()
 
-            if prev_departure_time == None:
+            if prev_departure_time is None:
                 prev_departure_time = arrival_time
 
-            if prev_departure_time <= current_time <= arrival_time:
-                if prev_stop == None:
+            if prev_departure_time <= current_time < arrival_time:
+                if prev_stop is None:
                     prev_stop = stop
 
                 prev_stop_lat = prev_stop.stop_lat
@@ -100,7 +100,25 @@ def trains():
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
                     "delay": current_arrive_delay,
-                    "nextStopName": translate(prev_stop.stop_name, schedule),
+                    "nextStopName": translate(stop.stop_name, schedule),
+                    "isStopped": False,
+                    "debug": {
+                        "arrival_time": str(arrival_time),
+                        "departure_time": str(departure_time),
+                        "ent": str(entity),
+                        "trip": str(trip)
+                    }
+
+                })
+                break
+            elif arrival_time <= current_time <= departure_time:
+                ret.append({
+                    "name": translate(trip.trip_headsign, schedule),
+                    "lat": stop.stop_lat,
+                    "lon": stop.stop_lon,
+                    "delay": current_depart_delay,
+                    "nextStopName": translate(stop.stop_name, schedule),
+                    "isStopped": True
                 })
                 break
 
@@ -120,7 +138,7 @@ def updatedb():
 
 def translate(text, schedule):
     trans_object = schedule.translations_query.filter_by(trans_id = text, lang = "nl").first()
-    if trans_object == None:
+    if trans_object is None:
         return text
     return trans_object.translation
 
