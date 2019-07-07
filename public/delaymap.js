@@ -54,7 +54,7 @@ function addStats(map, stats) {
   stats["all_delays"].forEach((delay) => {
     if (delay == 0) {
       green++;
-    } else if (delay <= 360) {
+    } else if (delay < 360) {
       orange++;
     } else { 
       red++;
