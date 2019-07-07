@@ -21,18 +21,18 @@ def style():
 def javascript():
     return send_from_directory("public", "delaymap.js")
 
-@app.route("/old/")
-@app.route("/old/index.html")
-def old_index():
-    return send_from_directory("old_public", "index.html")
-
-@app.route("/old/server.js")
-def old_server():
-    return send_from_directory("old_public", "server.js")
-
-@app.route("/background.png")
-def old_background():
-    return send_from_directory("old_public", "background.png")
+#@app.route("/old/")
+#@app.route("/old/index.html")
+#def old_index():
+#    return send_from_directory("old_public", "index.html")
+#
+#@app.route("/old/server.js")
+#def old_server():
+#    return send_from_directory("old_public", "server.js")
+#
+#@app.route("/background.png")
+#def old_background():
+#    return send_from_directory("old_public", "background.png")
 
 @app.route("/trains.json")
 def trains():
