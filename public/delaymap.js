@@ -54,7 +54,7 @@ function addStats(map, stats) {
   stats["all_delays"].forEach((delay) => {
     if (delay == 0) {
       green++;
-    } else if (delay < 360) {
+    } else if (delay <= 360) {
       orange++;
     } else { 
       red++;
@@ -79,7 +79,7 @@ function drawTrains(trains) {
 }
 
 function drawTrain(train) {
-  const color = train.delay == 0 ? "green" : (train.delay < 360 ? "orange" : "red")
+  const color = train.delay == 0 ? "green" : (train.delay <= 360 ? "orange" : "red")
   const trainMarker = L.divIcon({
     html: `<i class="fa fa-train" style="color: ${color}"></i>`,
     iconSize: [20, 20],
