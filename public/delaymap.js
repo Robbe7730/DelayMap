@@ -1,6 +1,7 @@
 let map;
 let interval;
 let markers;
+let stats_control;
 
 function onLoad() {
   map = L.map('leafletMap').setView([50.502, 4.335], 8);
@@ -14,6 +15,7 @@ function onLoad() {
   const legend = L.control({position: 'topright'});
   legend.onAdd = addLegend;
   legend.addTo(map);
+  stats_control = L.control({position: 'bottomleft'});
   getTrains();
   interval = setInterval(getTrains, 5000);
 }
@@ -30,7 +32,44 @@ function addLegend(map) {
 
 function getTrains() {
   return fetch("/trains.json").then((res) => res.json())
-                              .then(drawTrains);
+                              .then(drawData);
+}
+
+function drawData(data) {
+  drawTrains(data["trains"]);
+  drawStats(data["stats"]);
+}
+
+function drawStats(stats_data) {
+  stats_control.remove()
+  stats_control = L.control({position: 'bottomleft'});
+  stats_control.onAdd = (map) => addStats(map,stats_data);
+  stats_control.addTo(map);
+}
+
+function addStats(map, stats) {
+  let green = 0;
+  let orange = 0;
+  let red = 0;
+  stats["all_delays"].forEach((delay) => {
+    if (delay == 0) {
+      green++;
+    } else if (delay <= 360) {
+      orange++;
+    } else { 
+      red++;
+    }
+  });
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML = "<strong>Stats</strong><br>" +
+                  `Average delay: ${Math.round(stats["avg_delay"] / 0.60) / 100} minutes <br>` + 
+                  `Maximum delay: ${stats["max_delay"] / 60} minutes <br>` +
+                  `"Green" trains: ${green} <br>` +
+                  `"Orange" trains: ${orange} <br>` +
+                  `"Red" trains: ${red} <br>` +
+                  `Total trains: ${green+red+orange} <br>`;
+
+  return div;
 }
 
 function drawTrains(trains) {

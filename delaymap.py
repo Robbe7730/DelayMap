@@ -23,8 +23,9 @@ def javascript():
 
 @app.route("/trains.json")
 def trains():
+    delays = []
     schedule = pygtfs.Schedule("database.db")
-    ret = []
+    train_data = []
     feed = gtfs_realtime_pb2.FeedMessage()
     response = requests.get("https://sncb-opendata.hafas.de/gtfs/realtime/c21ac6758dd25af84cca5b707f3cb3de", allow_redirects=True)
     feed.ParseFromString(response.content)
@@ -82,24 +83,19 @@ def trains():
                 delta_lat = (next_stop_lat - prev_stop_lat) * percentage
                 delta_lon = (next_stop_lon - prev_stop_lon) * percentage
 
-                ret.append({
+                delays.append(current_arrive_delay)
+                train_data.append({
                     "name": translate(trip.trip_headsign, schedule),
                     "lat": prev_stop_lat + delta_lat,
                     "lon": prev_stop_lon + delta_lon,
                     "delay": current_arrive_delay,
                     "nextStopName": translate(stop.stop_name, schedule),
                     "isStopped": False,
-                    "debug": {
-                        "arrival_time": str(arrival_time),
-                        "departure_time": str(departure_time),
-                        "ent": str(entity),
-                        "trip": str(trip)
-                    }
-
                 })
                 break
             elif arrival_time <= current_time <= departure_time:
-                ret.append({
+                delays.append(current_depart_delay)
+                train_data.append({
                     "name": translate(trip.trip_headsign, schedule),
                     "lat": stop.stop_lat,
                     "lon": stop.stop_lon,
@@ -111,7 +107,14 @@ def trains():
 
             prev_departure_time = departure_time
             prev_stop = stop
-    return jsonify(ret)
+    return jsonify({
+        "trains": train_data,
+        "stats": {
+            "max_delay": max(delays),
+            "avg_delay": sum(delays)/len(delays),
+            "all_delays": delays
+            }
+        })
 
 
 @app.route("/updatedb")
