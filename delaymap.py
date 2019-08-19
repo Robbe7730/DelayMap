@@ -11,15 +11,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return send_from_directory("public", "index.html")
-
-@app.route("/style.css")
-def style():
-    return send_from_directory("public", "style.css")
-
-@app.route("/delaymap.js")
-def javascript():
-    return send_from_directory("public", "delaymap.js")
+    return send_from_directory("static", "index.html")
 
 @app.route("/trains.json")
 def trains():
@@ -55,8 +47,8 @@ def trains():
             arrival_seconds = stop_time.arrival_time.seconds + current_arrive_delay
             departure_seconds = stop_time.departure_time.seconds + current_depart_delay
 
-            arrival_time = datetime.time(arrival_seconds // 3600, (arrival_seconds // 60) % 60, arrival_seconds % 60)
-            departure_time = datetime.time(departure_seconds // 3600, (departure_seconds // 60) % 60, departure_seconds % 60)
+            arrival_time = datetime.time((arrival_seconds // 3600) % 24, (arrival_seconds // 60) % 60, arrival_seconds % 60)
+            departure_time = datetime.time((departure_seconds // 3600) %24, (departure_seconds // 60) % 60, departure_seconds % 60)
             current_time = datetime.datetime.now(tz).time()
 
             if prev_departure_time is None:
