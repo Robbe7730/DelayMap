@@ -2,6 +2,7 @@ let map;
 let interval;
 let markers;
 let stats_control;
+let path;
 
 const API_URL = "http://localhost:8000/trains";
 
@@ -11,7 +12,7 @@ function onLoad() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
-  
+
   markers = L.layerGroup().addTo(map);
 
   const legend = L.control({position: 'topright'});
@@ -25,7 +26,7 @@ function onLoad() {
 function addLegend(map) {
   const div = L.DomUtil.create('div', 'info legend');
   div.innerHTML = "<strong>Legend</strong><br>" +
-                  'Green: No delay <br>' + 
+                  'Green: No delay <br>' +
                   'Orange: 6 minutes or less <br>' +
                   'Red: More than 6 minutes <br>';
 
@@ -63,7 +64,7 @@ function addStats(map, trains) {
       green++;
     } else if (delay <= 360) {
       orange++;
-    } else { 
+    } else {
       red++;
     }
     if (delay > max_delay) {
@@ -73,7 +74,7 @@ function addStats(map, trains) {
   const avg_delay = total_delay / trains.length;
   const div = L.DomUtil.create('div', 'info legend');
   div.innerHTML = "<strong>Stats</strong><br>" +
-                  `Average delay: ${Math.round(avg_delay / 0.60) / 100} minutes <br>` + 
+                  `Average delay: ${Math.round(avg_delay / 0.60) / 100} minutes <br>` +
                   `Maximum delay: ${max_delay / 60} minutes <br>` +
                   `"Green" trains: ${green} <br>` +
                   `"Orange" trains: ${orange} <br>` +
@@ -89,6 +90,15 @@ function drawTrains(trains) {
   trains.forEach(drawTrain);
 }
 
+function drawStops(stops) {
+  if (path) {
+    path.remove()
+  }
+  path = L.polyline(
+    stops.map((x) => [x.lat, x.lon])
+  ).addTo(map);
+}
+
 function drawTrain(train) {
   const curr_station = train.stops[train.stop_index];
   const curr_delay = train.is_stopped ? curr_station.departure_delay : curr_station.arrival_delay;
@@ -99,12 +109,15 @@ function drawTrain(train) {
     className: 'myDivIcon',
     popupAnchor: [-15,-15]
   })
-  const marker = L.marker([train.estimated_lat, train.estimated_lon], {icon: trainMarker}).addTo(markers);
+  const marker = L.marker([train.estimated_lat, train.estimated_lon], {icon: trainMarker, train: train}).addTo(markers);
   marker.bindPopup(`<strong>${train.name}</strong>: +${curr_delay/60} min<br>Next stop: ${curr_station.name}`);
   marker.on('mouseover', (e) => {
     marker.openPopup();
   });
   marker.on('mouseout', (e) => {
     marker.closePopup();
+  });
+  marker.on('click', (e) => {
+    drawStops(e.target.options.train.stops);
   });
 }
