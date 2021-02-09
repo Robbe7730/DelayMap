@@ -2,23 +2,41 @@ let map;
 let interval;
 let markers;
 let stats_control;
-let path;
+let paths;
 
 const API_URL = "http://localhost:8000/trains";
 
 function onLoad() {
   map = L.map('leafletMap').setView([50.502, 4.335], 8);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  L.tileLayer('https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=RnGNHRQeMSeyIoQKPB99', {
+    attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
   }).addTo(map);
 
+  const openrailwaymap = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+  {
+    attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap',
+    minZoom: 2,
+    maxZoom: 19,
+    tileSize: 256
+  });
+
+  paths = L.layerGroup().addTo(map);
   markers = L.layerGroup().addTo(map);
 
   const legend = L.control({position: 'topright'});
   legend.onAdd = addLegend;
   legend.addTo(map);
   stats_control = L.control({position: 'bottomleft'});
+
+  L.control.layers({}, {
+    "OpenRailwayMap": openrailwaymap,
+    "Routes": paths,
+  }, {
+    "collapsed": false,
+    "position": 'topleft',
+  }).addTo(map);
+
   getTrains();
   interval = setInterval(getTrains, 5000);
 }
@@ -91,12 +109,10 @@ function drawTrains(trains) {
 }
 
 function drawStops(stops) {
-  if (path) {
-    path.remove()
-  }
-  path = L.polyline(
+  paths.clearLayers();
+  L.polyline(
     stops.map((x) => [x.lat, x.lon])
-  ).addTo(map);
+  ).addTo(paths);
 }
 
 function drawTrain(train) {
