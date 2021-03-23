@@ -4,7 +4,7 @@
   "description": "A map that shows the delays and position of Belgian trains",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint delaymap.js",
     "serve": "node server.js"
   },
   "repository": {
