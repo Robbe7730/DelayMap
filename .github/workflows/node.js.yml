@@ -5,9 +5,7 @@ name: Build and deploy via SSH
 
 on:
   push:
-    branches: [ master, v3.0.0 ]
-  pull_request:
-    branches: [ master, v3.0.0 ]
+    branches: [ v3.0.0 ]
 
 jobs:
   build:
