@@ -1,5 +1,8 @@
 # DelayMap
 
+[![Frontend](https://github.com/Robbe7730/DelayMap/actions/workflows/node.js.yml/badge.svg)](https://github.com/Robbe7730/DelayMap/actions/workflows/node.js.yml)
+[![Backend](https://github.com/Robbe7730/DelayMapI/actions/workflows/rust.yml/badge.svg)](https://github.com/Robbe7730/DelayMapI/actions/workflows/rust.yml)
+
 A map that shows the delays and position of Belgian trains.
 
 Currently running at <https://delaymap.robbevanherck.be/>.
