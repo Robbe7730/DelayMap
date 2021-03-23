@@ -1,7 +1,8 @@
 let map;
 let markers;
-let stats_control;
+let statsControl;
 let paths;
+
 const L = window.L;
 
 // This value will be set at buildtime
@@ -50,7 +51,10 @@ function onLoad() { // eslint-disable-line no-unused-vars
         'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=RnGNHRQeMSeyIoQKPB99',
         {
             attribution:
-                '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                '<a href="https://www.maptiler.com/copyright/"' +
+                'target="_blank">&copy; MapTiler</a> <a ' +
+                'href="https://www.openstreetmap.org/copyright"' +
+                'target="_blank">&copy; OpenStreetMap contributors</a>',
         }
     ).addTo(map);
 
@@ -59,7 +63,11 @@ function onLoad() { // eslint-disable-line no-unused-vars
         'http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
         {
             attribution:
-                '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a>',
+                '<a href="https://www.openstreetmap.org/copyright">&copy;' +
+                'OpenStreetMap contributors</a>, Style: <a ' +
+                'href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA' +
+                '2.0</a> <a ' +
+                'href="http://www.openrailwaymap.org/">OpenRailwayMap</a>',
             minZoom: 2,
             maxZoom: 19,
             tileSize: 256,
@@ -76,7 +84,7 @@ function onLoad() { // eslint-disable-line no-unused-vars
     legend.addTo(map);
 
     // Add an (empty) box for the stats
-    stats_control = L.control({ position: 'bottomleft' });
+    statsControl = L.control({ position: 'bottomleft' });
 
     // Add the layer control box
     L.control
@@ -120,7 +128,39 @@ function addLegend() {
 function getTrains() {
     fetch(API_URL)
         .then((res) => res.json())
-        .then(drawData);
+        .then(drawData)
+        .catch(handleError);
+}
+
+/**
+ * Handle a fetch error
+ *
+ * @param {TypeError} error - The error that occured
+ */
+function handleError(error) {
+    console.error(error);
+    
+    statsControl.remove();
+    statsControl = L.control({ position: 'bottomleft' });
+    statsControl.onAdd = (map) => addError(map, error);
+    statsControl.addTo(map);
+}
+
+/**
+ * Add the error data to the error bar
+ *
+ * @param {L.map} map - The Leaflet map
+ * @param {TypeError} error - The error to show
+ * @returns {L.DomUtil} div - The div to display
+ */
+function addError(map, error) {
+    const div = L.DomUtil.create('div', 'info error');
+    div.innerHTML = '<b> Could not load data, if this issue persists please ' + 
+                    '<a href="https://github.com/Robbe7730/DelayMap/issues/new">' +
+                    'file an issue on GitHub</a></b><br>'+ 
+                    'Error message: ' + error.message;
+    div.style.backgroundColor = '#cc0000';
+    return div;
 }
 
 /**
@@ -134,15 +174,15 @@ function drawData(data) {
 }
 
 /**
- * Remove the old stats_control field and add a new one
+ * Remove the old statsControl field and add a new one
  *
  * @param {APIData} trains The data to draw
  */
 function drawStats(trains) {
-    stats_control.remove();
-    stats_control = L.control({ position: 'bottomleft' });
-    stats_control.onAdd = (map) => addStats(map, trains);
-    stats_control.addTo(map);
+    statsControl.remove();
+    statsControl = L.control({ position: 'bottomleft' });
+    statsControl.onAdd = (map) => addStats(map, trains);
+    statsControl.addTo(map);
 }
 
 /**
