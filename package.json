@@ -1,0 +1,25 @@
+{
+  "name": "delaymap",
+  "version": "3.0.0",
+  "description": "A map that shows the delays and position of Belgian trains",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robbe7730/DelayMap.git"
+  },
+  "author": "Robbe Van Herck",
+  "license": "None",
+  "bugs": {
+    "url": "https://github.com/Robbe7730/DelayMap/issues"
+  },
+  "homepage": "https://github.com/Robbe7730/DelayMap#readme",
+  "devDependencies": {
+    "eslint": "^7.22.0"
+  },
+  "dependencies": {
+    "eslint-plugin-jsdoc": "^32.3.0"
+  }
+}
