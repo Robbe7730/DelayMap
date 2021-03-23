@@ -21,6 +21,8 @@ jobs:
       run: npm install
     - name: Build the frontend
       run: API_URL=https://delaymap.robbevanherck.be/trains npm run build
+    - name: Run tests
+      run: npm test
     - name: Copy to the server
       uses: appleboy/scp-action@master
       with:
