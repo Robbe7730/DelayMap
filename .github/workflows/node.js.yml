@@ -15,11 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Test with ESLint
+    - name: Setup NodeJS
       uses: actions/setup-node@v1
       with:
         node-version: v15
-    - run: npm install
+    - name: Install dependencies
+      run: npm install
+    - name: Build the frontend
+      run: API_URL=https://delaymap.robbevanherck.be/trains npm run build
     - name: Copy to the server
       uses: appleboy/scp-action@master
       with:

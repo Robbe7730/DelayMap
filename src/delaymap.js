@@ -4,7 +4,8 @@ let stats_control;
 let paths;
 const L = window.L;
 
-const API_URL = 'http://localhost:8000/trains';
+// This value will be set at buildtime
+const API_URL = '{API_URL}';
 
 /**
  * @typedef Stop
