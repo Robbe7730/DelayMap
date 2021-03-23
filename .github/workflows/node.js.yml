@@ -19,6 +19,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: v15
+    - run: npm install
     - run: npm test
     - name: Copy to the server
       uses: appleboy/scp-action@master
