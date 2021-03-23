@@ -5,7 +5,7 @@ name: Build and deploy via SSH
 
 on:
   push:
-    branches: [ v3.0.0 ]
+    branches: [ "v3.0.0" ]
 
 jobs:
   build:
