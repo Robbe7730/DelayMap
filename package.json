@@ -14,7 +14,7 @@
     "url": "git+https://github.com/Robbe7730/DelayMap.git"
   },
   "author": "Robbe Van Herck",
-  "license": "None",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Robbe7730/DelayMap/issues"
   },
