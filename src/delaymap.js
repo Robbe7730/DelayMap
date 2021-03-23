@@ -1,3 +1,8 @@
+/**
+ * @file The script that runs the DelayMap frontend.
+ * @author Robbe Van Herck
+ */
+
 let map;
 let markers;
 let statsControl;
@@ -11,28 +16,28 @@ const API_URL = '{API_URL}';
 /**
  * @typedef Stop
  * @type {object}
- * @property {string} name - The name of the stop
- * @property {number} lat - The latitude of the stop
- * @property {number} lon - The longitude of the stop
+ * @property {string} name - The name of the stop.
+ * @property {number} lat - The latitude of the stop.
+ * @property {number} lon - The longitude of the stop.
  * @property {number} arrival_delay - With how much delay the train will arrive
- * at the next station
+ * at the next station.
  * @property {number} departure_delay - With how much delay the train will
- * depart at the next station
+ * depart at the next station.
  * @property {number} arrival_timestamp - The timestamp in minutes after
- * midnight when the train will arrive at the next station
+ * midnight when the train will arrive at the next station.
  * @property {number} departure_timestamp - The timestamp in minutes after
- * midnight when the train will depart at the next station
+ * midnight when the train will depart at the next station.
  */
 
 /**
  * @typedef TrainData
  * @type {object}
- * @property {string} name - The name of the train
- * @property {Stop[]} stops - The stops of the train
- * @property {number} stop_index - The index of the current stops in stops
- * @property {boolean} is_stopped - True if the train is currently in a station
- * @property {number} estimated_lat - The estimated latitude of the train
- * @property {number} estimated_lon - The estimated longitude of the train
+ * @property {string} name - The name of the train.
+ * @property {Stop[]} stops - The stops of the train.
+ * @property {number} stop_index - The index of the current stops in stops.
+ * @property {boolean} is_stopped - True if the train is currently in a station.
+ * @property {number} estimated_lat - The estimated latitude of the train.
+ * @property {number} estimated_lon - The estimated longitude of the train.
  */
 
 /**
@@ -41,7 +46,7 @@ const API_URL = '{API_URL}';
  */
 
 /**
- * Setup the page
+ * Setup the page.
  */
 function onLoad() { // eslint-disable-line no-unused-vars
     map = L.map('leafletMap').setView([50.502, 4.335], 8);
@@ -107,9 +112,9 @@ function onLoad() { // eslint-disable-line no-unused-vars
 }
 
 /**
- * Add the legend to the map
+ * Add the legend to the map.
  *
- * @returns {L.DomUtil} div The div that was created
+ * @returns {HTMLElement} The div that was created.
  */
 function addLegend() {
     const div = L.DomUtil.create('div', 'info legend');
@@ -123,7 +128,7 @@ function addLegend() {
 }
 
 /**
- * Get the trains and call drawData with the parsed JSON
+ * Get the trains and call drawData with the parsed JSON.
  */
 function getTrains() {
     fetch(API_URL)
@@ -133,9 +138,9 @@ function getTrains() {
 }
 
 /**
- * Handle a fetch error
+ * Handle a fetch error.
  *
- * @param {TypeError} error - The error that occured
+ * @param {Error} error - The error that occured.
  */
 function handleError(error) {
     console.error(error);
@@ -147,11 +152,11 @@ function handleError(error) {
 }
 
 /**
- * Add the error data to the error bar
+ * Add the error data to the error bar.
  *
- * @param {L.map} map - The Leaflet map
- * @param {TypeError} error - The error to show
- * @returns {L.DomUtil} div - The div to display
+ * @param {L.Map} map - The Leaflet map.
+ * @param {Error} error - The error to show.
+ * @returns {HTMLElement} The div to display.
  */
 function addError(map, error) {
     const div = L.DomUtil.create('div', 'info error');
@@ -164,9 +169,9 @@ function addError(map, error) {
 }
 
 /**
- * Draw the requested data, both the trains and the statistics
+ * Draw the requested data, both the trains and the statistics.
  *
- * @param {APIData} data The data to draw
+ * @param {APIData} data - The data to draw.
  */
 function drawData(data) {
     drawTrains(data);
@@ -174,23 +179,23 @@ function drawData(data) {
 }
 
 /**
- * Remove the old statsControl field and add a new one
+ * Remove the old statsControl field and add a new one.
  *
- * @param {APIData} trains The data to draw
+ * @param {APIData} data - The data to draw.
  */
-function drawStats(trains) {
+function drawStats(data) {
     statsControl.remove();
     statsControl = L.control({ position: 'bottomleft' });
-    statsControl.onAdd = (map) => addStats(map, trains);
+    statsControl.onAdd = (map) => addStats(map, data);
     statsControl.addTo(map);
 }
 
 /**
- * Fill in the statistics field
+ * Fill in the statistics field.
  *
- * @param {L.map} map The map to draw on
- * @param {APIData} trains The train data
- * @returns {L.DomUtil} div The div to display
+ * @param {L.Map} map - The map to draw on.
+ * @param {APIData} trains - The train data.
+ * @returns {HTMLElement} The div to display.
  */
 function addStats(map, trains) {
     let green = 0;
@@ -244,9 +249,9 @@ function addStats(map, trains) {
 }
 
 /**
- * Draw the trains on the map
+ * Draw the trains on the map.
  *
- * @param {APIData} trains The data to draw
+ * @param {APIData} trains - The data to draw.
  */
 function drawTrains(trains) {
     markers.clearLayers();
@@ -255,9 +260,9 @@ function drawTrains(trains) {
 }
 
 /**
- * Draw a line between the stops given
+ * Draw a line between the stops given.
  *
- * @param {Stop[]} stops The stops to draw
+ * @param {Stop[]} stops - The stops to draw.
  */
 function drawStops(stops) {
     paths.clearLayers();
@@ -265,9 +270,9 @@ function drawStops(stops) {
 }
 
 /**
- * Draw one train on the map in the right color and with the right position
+ * Draw one train on the map in the right color and with the right position.
  *
- * @param {TrainData} train The train to draw
+ * @param {TrainData} train - The train to draw.
  */
 function drawTrain(train) {
     // Get the current station

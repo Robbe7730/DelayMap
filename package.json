@@ -4,7 +4,7 @@
   "description": "A map that shows the delays and position of Belgian trains",
   "main": "server.js",
   "scripts": {
-    "test": "eslint delaymap.js",
+    "test": "eslint src/",
     "serve": "node serve.js",
     "build": "mkdir -p ./dist && cp -r static/ dist/ && cp src/* dist/ && sed -i \"s@{API_URL}@${API_URL:-http://localhost:8000/trains}@g\" dist/delaymap.js",
     "preserve": "npm run build"
