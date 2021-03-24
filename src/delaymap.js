@@ -3,16 +3,6 @@
  * @author Robbe Van Herck
  */
 
-let map;
-let markers;
-let statsControl;
-let paths;
-
-const L = window.L;
-
-// This value will be set at buildtime
-const API_URL = '{API_URL}';
-
 /**
  * @typedef Stop
  * @type {object}
@@ -44,6 +34,17 @@ const API_URL = '{API_URL}';
  * @typedef APIData
  * @type {TrainData[]}
  */
+
+let map;
+let markers;
+let statsControl;
+let paths;
+
+const L = window.L;
+
+// This value will be set at buildtime
+const API_URL = '{API_URL}';
+
 
 /**
  * Setup the page.
@@ -105,6 +106,9 @@ function onLoad() { // eslint-disable-line no-unused-vars
             }
         )
         .addTo(map);
+
+    // Clear the routes when just the map is clicked
+    map.on('click', () => drawStops([]));
 
     // Load (and draw) the trains every 5 seconds
     getTrains();
@@ -315,7 +319,7 @@ function drawTrain(train) {
     });
 
     // Show the route on click
-    marker.on('click', (e) => {
-        drawStops(e.target.options.train.stops);
+    marker.on('click', (train) => {
+        drawStops(train.target.options.train.stops);
     });
 }
