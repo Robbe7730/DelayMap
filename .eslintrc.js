@@ -3,29 +3,21 @@ module.exports = {
         'browser': true,
         'es2021': true
     },
-    'extends': [
-        'eslint:recommended',
-    ],
+    'extends': 'eslint:all',
     'parserOptions': {
         'ecmaVersion': 12,
         'sourceType': 'module'
     },
+    'plugins': ['jsdoc'],
     'rules': {
+        'func-style': [
+            'error',
+            'declaration'
+        ],
+        'function-call-argument-newline': 0,
         'indent': [
             'error',
             4
-        ],
-        'linebreak-style': [
-            'error',
-            'unix'
-        ],
-        'quotes': [
-            'error',
-            'single'
-        ],
-        'semi': [
-            'error',
-            'always'
         ],
         'jsdoc/check-access': 1,
         'jsdoc/check-alignment': 1,
@@ -67,9 +59,37 @@ module.exports = {
         'jsdoc/require-throws': 1,
         'jsdoc/require-yields': 1,
         'jsdoc/require-yields-check': 1,
-        'jsdoc/valid-types': 1
-    },
-    'plugins': [
-        'jsdoc'
-    ]
+        'jsdoc/valid-types': 1,
+        'linebreak-style': [
+            'error',
+            'unix'
+        ],
+        'max-lines': 0,
+        'no-console': 0,
+        'no-magic-numbers': 0,
+        'no-nested-ternary': 0,
+        'no-plusplus': 0,
+        'no-ternary': 0,
+        'no-trailing-spaces': 'error',
+        'one-var': [
+            'error',
+            'never'
+        ],
+        'padded-blocks': [
+            'error',
+            'never'
+        ],
+        'quotes': [
+            'error',
+            'single'
+        ],
+        'semi': [
+            'error',
+            'always'
+        ],
+        'space-before-function-paren': [
+            'error',
+            'never'
+        ]
+    }
 };
