@@ -216,6 +216,7 @@ function createPopup(train) {
         .setContent(`<strong>${train.name}</strong>: ` +
       `+${getDelay(train) / 60} min<br>Next stop: ${currStation.name}`)
         .openOn(map);
+    currentPopup.on('remove', removePopup);
 }
 
 /**
