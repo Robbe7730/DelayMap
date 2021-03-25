@@ -17,11 +17,13 @@
  * midnight when the train will arrive at the next station.
  * @property {number} departure_timestamp - The timestamp in minutes after
  * midnight when the train will depart at the next station.
+ * @property {string} stop_id - The unique id of this stop.
  */
 
 /**
  * @typedef TrainData
  * @type {object}
+ * @property {string} id - The id of this train.
  * @property {string} name - The name of the train.
  * @property {Stop[]} stops - The stops of the train.
  * @property {number} stop_index - The index of the current stops in stops.
@@ -47,6 +49,8 @@ let map = null;
 let markers = null;
 let paths = null;
 let statsControl = null;
+let selected = null;
+let currentPopup = null;
 
 
 /**
@@ -130,13 +134,13 @@ function createTrainMarker(color, train) {
     const trainIcon = Leaflet.divIcon({
         'className': 'myDivIcon',
         'html': `<i class='fa fa-train' style='color: ${color}'></i>`,
+        'iconAnchor': [
+            5,
+            10
+        ],
         'iconSize': [
             20,
             20
-        ],
-        'popupAnchor': [
-            -15,
-            -15
         ]
     });
     return Leaflet.marker(
@@ -152,47 +156,91 @@ function createTrainMarker(color, train) {
 }
 
 /**
+ * Get the color corresponding to the delay.
+ *
+ * @param {number} delay - The delay in seconds.
+ * @returns {string} The color as a string.
+ */
+function getColor(delay) {
+    return delay === 0
+        ? 'green'
+        : delay <= 360
+            ? 'orange'
+            : 'red';
+}
+
+/**
+ * Calculate the delay of a train (either arrival or departure delay).
+ *
+ * @param {TrainData} train - The train to calculate the delay for.
+ * @returns {number} The delay that should be used.
+ */
+function getDelay(train) {
+    const currStation = train.stops[train.stop_index];
+
+    return train.is_stopped
+        ? currStation.departure_delay
+        : currStation.arrival_delay;
+}
+
+/**
+ * Remove the current popup.
+ */
+function removePopup() {
+    if (currentPopup) {
+        currentPopup.remove();
+    }
+
+    selected = null;
+}
+
+/**
+ * Create the popup for a train.
+ *
+ * @param {TrainData} train - The train to draw the popup for.
+ */
+function createPopup(train) {
+    removePopup();
+
+    selected = train.id;
+
+    const currStation = train.stops[train.stop_index];
+
+    currentPopup = Leaflet.popup({
+        'offset': new Leaflet.Point(0, -3)
+    })
+        .setLatLng([
+            train.estimated_lat,
+            train.estimated_lon
+        ])
+        .setContent(`<strong>${train.name}</strong>: ` +
+      `+${getDelay(train) / 60} min<br>Next stop: ${currStation.name}`)
+        .openOn(map);
+}
+
+/**
  * Draw one train on the map in the right color and with the right position.
  *
  * @param {TrainData} train - The train to draw.
  */
 function drawTrain(train) {
-    // Get the current station
-    const currStation = train.stops[train.stop_index];
-
-    // Get the current delay
-    const currDelay = train.is_stopped
-        ? currStation.departure_delay
-        : currStation.arrival_delay;
-
     // Calculate the color of the marker
-    const color = currDelay === 0
-        ? 'green'
-        : currDelay <= 360
-            ? 'orange'
-            : 'red';
+    const color = getColor(getDelay(train));
 
     // Create the marker
     const marker = createTrainMarker(color, train).addTo(markers);
-
-    // Create the popup for the train
-    marker.bindPopup(`<strong>${
-        train.name
-    }</strong>: +${currDelay / 60} min<br>Next stop: ${
-        currStation.name
-    }`);
 
     // Show the popup on hover
     marker.on(
         'mouseover',
         () => {
-            marker.openPopup();
+            createPopup(train);
         }
     );
     marker.on(
         'mouseout',
         () => {
-            marker.closePopup();
+            removePopup();
         }
     );
 
@@ -201,8 +249,14 @@ function drawTrain(train) {
         'click',
         () => {
             drawStops(train.stops);
+            createPopup(train);
         }
     );
+
+    // Show the popup already if it was selected before it was redrawn
+    if (selected === train.id) {
+        createPopup(train);
+    }
 }
 
 /**
@@ -239,7 +293,7 @@ function addError(error) {
         'div',
         'info error'
     );
-    div.innerHTML = '<b> Could not load data, if this issue persistsplease ' +
+    div.innerHTML = '<b> Could not load data, if this issue persists please ' +
                     '<a href="https://github.com/Robbe7730/DelayMap/issues">' +
                     'file an issue on GitHub</a></b><br>' +
                     `Error message: ${error.message}`;
@@ -297,10 +351,10 @@ function addLegend() {
  * Get the trains and call drawData with the parsed JSON.
  */
 function getTrains() {
-    fetch(API_URL).
-        then((res) => res.json()).
-        then(drawData).
-        catch(handleError);
+    fetch(API_URL)
+        .then((res) => res.json())
+        .then(drawData)
+        .catch(handleError);
 }
 
 /**
@@ -378,7 +432,10 @@ function onLoad() { // eslint-disable-line no-unused-vars
     // Clear the routes when just the map is clicked
     map.on(
         'click',
-        () => drawStops([])
+        () => {
+            drawStops([]);
+            selected = null;
+        }
     );
 
     // Load (and draw) the trains every 5 seconds

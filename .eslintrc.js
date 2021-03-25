@@ -10,6 +10,10 @@ module.exports = {
     },
     'plugins': ['jsdoc'],
     'rules': {
+        'dot-location': [
+            'error',
+            'property'
+        ],
         'func-style': [
             'error',
             'declaration'
