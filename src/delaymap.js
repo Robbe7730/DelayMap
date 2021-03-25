@@ -200,7 +200,7 @@ function drawTrain(train) {
     marker.on(
         'click',
         () => {
-            drawStops(train.target.options.train.stops);
+            drawStops(train.stops);
         }
     );
 }
