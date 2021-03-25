@@ -43,14 +43,7 @@ const DEFAULT_ZOOM = 8;
 const Leaflet = window.L;
 const MT_KEY = 'RnGNHRQeMSeyIoQKPB99';
 
-const map = Leaflet.map('leafletMap').setView(
-    [
-        DEFAULT_CENTER_X,
-        DEFAULT_CENTER_Y
-    ],
-    DEFAULT_ZOOM
-);
-
+let map = null;
 let markers = null;
 let paths = null;
 let statsControl = null;
@@ -342,31 +335,37 @@ function addLayers() {
         }
     );
 
+    // Add empty layers for the routes and markers
+    paths = Leaflet.layerGroup().addTo(map);
+    markers = Leaflet.layerGroup().addTo(map);
+
     // Add the layer control box
-    Leaflet.control.
-        layers(
-            {},
-            {
-                'OpenRailwayMap': openrailwaymap,
-                'Routes': paths
-            },
-            {
-                'collapsed': false,
-                'position': 'topleft'
-            }
-        ).
-        addTo(map);
+    Leaflet.control.layers(
+        {},
+        {
+            'OpenRailwayMap': openrailwaymap,
+            'Routes': paths
+        },
+        {
+            'collapsed': false,
+            'position': 'topleft'
+        }
+    ).addTo(map);
 }
 
 /**
  * Setup the page.
  */
 function onLoad() { // eslint-disable-line no-unused-vars
-    addLayers();
+    map = Leaflet.map('leafletMap').setView(
+        [
+            DEFAULT_CENTER_X,
+            DEFAULT_CENTER_Y
+        ],
+        DEFAULT_ZOOM
+    );
 
-    // Add empty layers for the routes and markers
-    paths = Leaflet.layerGroup().addTo(map);
-    markers = Leaflet.layerGroup().addTo(map);
+    addLayers();
 
     // Add the legend
     const legend = Leaflet.control({'position': 'topright'});
