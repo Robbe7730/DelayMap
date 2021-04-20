@@ -195,6 +195,28 @@ function removePopup() {
 }
 
 /**
+ * Format the delay in seconds to a human-readable string.
+ *
+ * @param {number} delay - The delay in seconds.
+ * @returns {string} - The delay as it should be shown.
+ */
+function formatDelay(delay) {
+    const delayMinutes = Math.floor(delay / 60);
+    const delaySeconds = delay % 60;
+
+    let delayFormatted = `+${delayMinutes}:`;
+    if (delaySeconds < 10) {
+        delayFormatted += `0${delaySeconds}`;
+    } else {
+        delayFormatted += `${delaySeconds}`;
+    }
+
+    delayFormatted += ' min';
+
+    return delayFormatted;
+}
+
+/**
  * Create the popup for a train.
  *
  * @param {TrainData} train - The train to draw the popup for.
@@ -206,6 +228,8 @@ function createPopup(train) {
 
     const currStation = train.stops[train.stop_index];
 
+    const totalDelay = getDelay(train);
+
     currentPopup = Leaflet.popup({
         'offset': new Leaflet.Point(0, -3)
     })
@@ -214,7 +238,8 @@ function createPopup(train) {
             train.estimated_lon
         ])
         .setContent(`<strong>${train.name}</strong>: ` +
-      `+${getDelay(train) / 60} min<br>Next stop: ${currStation.name}`)
+            `${formatDelay(totalDelay)}` +
+            `<br>Next stop: ${currStation.name}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
 }
