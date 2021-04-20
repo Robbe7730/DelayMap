@@ -392,7 +392,7 @@ function addLayers() {
 
     // Add empty layers for the routes and markers
     paths = Leaflet.layerGroup().addTo(map);
-    markers = Leaflet.layerGroup().addTo(map);
+    markers = Leaflet.markerClusterGroup().addTo(map);
 
     // Add the layer control box
     Leaflet.control.layers(
@@ -446,5 +446,4 @@ function onLoad() { // eslint-disable-line no-unused-vars
         5000
     );
 }
-
 
