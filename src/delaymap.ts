@@ -124,7 +124,7 @@ function drawStops(stops: StopTime[]) {
     paths.clearLayers();
     L.polyline(stops
         .filter((stop: StopTime):stop is FullStopTime =>
-            typeof stop.lat === 'undefined' && typeof stop.lon === 'undefined')
+            typeof stop.lat !== 'undefined' && typeof stop.lon !== 'undefined')
         .map((stop: FullStopTime) => [
             stop.lat,
             stop.lon
