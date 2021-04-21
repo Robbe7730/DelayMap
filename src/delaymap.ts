@@ -8,14 +8,19 @@ import {
     Control,
     DivIcon,
     DomUtil,
+    LatLngExpression,
     LayerGroup,
     Map,
     Marker,
+    MarkerOptions,
     Point,
     Polyline,
     Popup,
-    TileLayer
+    TileLayer,
+    markerClusterGroup
 } from 'leaflet';
+// eslint-disable-next-line sort-imports
+import 'leaflet.markercluster';
 
 declare global {
     interface Window {
@@ -64,6 +69,20 @@ interface WorksData {
     endDate: string,
     endTime: string,
     impactedStation?: Stop,
+}
+
+class TrainMarker extends Marker {
+    data: TrainData;
+
+    constructor(
+        data: TrainData,
+        latlng: LatLngExpression,
+        options?: MarkerOptions | undefined
+    ) {
+        super(latlng, options);
+
+        this.data = data;
+    }
 }
 
 type APITrainData = TrainData[];
@@ -156,7 +175,8 @@ function createTrainMarker(color: string, train: TrainData): Marker {
             20
         ]
     });
-    return new Marker(
+    return new TrainMarker(
+        train,
         [
             train.estimatedLat,
             train.estimatedLon
@@ -209,7 +229,7 @@ function createTrainPopup(train: TrainData) {
             train.estimatedLon
         ])
         .setContent(`<strong>${train.name}</strong>: ` +
-      `+${getDelay(train) / 60} min<br>Next stop: ${name}`)
+                `+${getDelay(train) / 60} min<br>Next stop: ${name}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
 }
@@ -434,7 +454,36 @@ function addLayers() {
 
     // Create the layers
     paths = new LayerGroup();
-    trainMarkerLayer = new LayerGroup();
+    trainMarkerLayer = markerClusterGroup({
+        'maxClusterRadius': 50,
+        'iconCreateFunction': (cluster) => {
+            const totalDelay = cluster.getAllChildMarkers()
+                .filter((marker: Marker): marker is TrainMarker => {
+                    const trainMarker = marker as TrainMarker;
+                    return typeof trainMarker.data !== 'undefined';
+                })
+                .map((marker) => getDelay(marker.data))
+                .reduce((acc, val) => acc + val, 0);
+            const childCount = cluster.getChildCount();
+            const avgDelay = totalDelay / childCount;
+
+
+            let className = 'marker-cluster-';
+            if (avgDelay < 60) {
+                className += 'small';
+            } else if (avgDelay < 360) {
+                className += 'medium';
+            } else {
+                className += 'large';
+            }
+
+            return new DivIcon({
+                'className': `marker-cluster ${className}`,
+                'html': `<div><span>${childCount}</span></div>`,
+                'iconSize': new Point(40, 40)
+            });
+        }
+    });
     worksMarkerLayer = new LayerGroup();
 
     // Add them to the map

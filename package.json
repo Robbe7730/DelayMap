@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Robbe7730/DelayMap#readme",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
+    "@types/leaflet.markercluster": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "copy-webpack-plugin": "^8.1.1",
@@ -34,6 +35,7 @@
   "dependencies": {
     "@types/leaflet": "^1.7.0",
     "eslint-plugin-jsdoc": "^32.3.0",
-    "leaflet": "^1.7.1"
+    "leaflet": "^1.7.1",
+    "leaflet.markercluster": "^1.5.0"
   }
 }
