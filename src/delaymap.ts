@@ -3,11 +3,13 @@
  * @author Robbe Van Herck
  */
 
-import L = require("leaflet");
-import * as config from "./config.json";
+import L = require('leaflet');
+import * as config from './config.json';
 
-export interface Window {
-    onLoad: () => void;
+declare global {
+    interface Window {
+        onLoad: () => void;
+    }
 }
 
 interface StopTime {
@@ -81,13 +83,9 @@ function addStats(trains: APITrainData): HTMLElement {
         const currStation = train.stops[train.stopIndex];
 
         // Calculate the delay
-        let delay = 0;
-
-        if (currStation) {
-            delay = train.isStopped
-                ? currStation.departureDelay
-                : currStation.arrivalDelay;
-        }
+        const delay = (train.isStopped
+            ? currStation?.departureDelay
+            : currStation?.arrivalDelay) || 0;
 
         // Categorize it
         if (delay === 0) {
@@ -125,14 +123,13 @@ function addStats(trains: APITrainData): HTMLElement {
 function drawStops(stops: StopTime[]) {
     paths.clearLayers();
     L.polyline(stops
-        .filter((s: StopTime): s is FullStopTime => {
-            return (s.lat !== undefined) && (s.lon !== undefined)
-        })
+        .filter((stop: StopTime):stop is FullStopTime =>
+            typeof stop.lat === 'undefined' && typeof stop.lon === 'undefined')
         .map((stop: FullStopTime) => [
             stop.lat,
             stop.lon
         ]))
-    .addTo(paths);
+        .addTo(paths);
 }
 
 function createTrainMarker(color: string, train: TrainData): L.Marker {
@@ -171,10 +168,10 @@ function getDelay(train: TrainData): number {
     const currStation = train.stops[train.stopIndex];
 
     return currStation
-                ? train.isStopped
-                    ? currStation.departureDelay
-                    : currStation.arrivalDelay
-                : 0;
+        ? train.isStopped
+            ? currStation.departureDelay
+            : currStation.arrivalDelay
+        : 0;
 }
 
 function removePopup() {
@@ -182,7 +179,7 @@ function removePopup() {
         currentPopup.remove();
     }
 
-    selected = "";
+    selected = '';
 }
 
 function createTrainPopup(train: TrainData) {
@@ -261,7 +258,7 @@ function createWorksMarker(works: WorksData): L.Marker {
             works.impactedStation?.lon || 0
         ],
         {
-            'icon': trainIcon,
+            'icon': trainIcon
         }
     );
 }
@@ -348,13 +345,12 @@ function drawTrainData(data: APITrainData) {
 }
 
 function handleError(error: Error) {
+    // eslint-disable-next-line no-console
     console.error(error);
 
     statsControl.remove();
     statsControl = new L.Control({'position': 'bottomleft'});
-    statsControl.onAdd = () => addError(
-        error
-    );
+    statsControl.onAdd = () => addError(error);
     statsControl.addTo(map);
 }
 
@@ -389,7 +385,9 @@ function getWorks() {
 function addLayers() {
     // Add background layer
     L.tileLayer(
-        `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${config.MT_KEY}`,
+        `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${
+            config.MT_KEY
+        }`,
         {
             'attribution':
                 '<a href="https://www.maptiler.com/copyright/"' +
@@ -463,7 +461,7 @@ function onLoad() {
         'click',
         () => {
             drawStops([]);
-            selected = "";
+            selected = '';
         }
     );
 
@@ -475,4 +473,4 @@ function onLoad() {
     );
 }
 
-(window as any).onLoad = onLoad;
+window.onLoad = onLoad;
