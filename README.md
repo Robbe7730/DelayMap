@@ -11,9 +11,15 @@ The API can be found at <https://github.com/Robbe7730/DelayMapI>
 
 ## Running the frontend
 
-To start a development server, make sure
-[the API](https://github.com/Robbe7730/DelayMapI) is running and run
+1. Make sure [the API](https://github.com/Robbe7730/DelayMapI) is running
+2. Create a config file in `src/config.json` as follows:
 
-```bash
-API_URL=https://localhost:8000/trains npm run serve
+```json
+{
+    "API_URL": "http://localhost:8000",
+    "MT_KEY": "Your_Maptiler_Key"
+}
 ```
+
+3. Start the frontend by running `npm run serve`
+4. Go to https://localhost:8080/

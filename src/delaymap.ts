@@ -3,6 +3,15 @@
  * @author Robbe Van Herck
  */
 
+import L = require("leaflet");
+import * as config from "./config.json";
+
+export interface DelayMapWindow extends Window {
+    onLoad: Function;
+}
+
+declare let window: DelayMapWindow;
+
 type StopTime = {
     name: string,
     lat: number,
@@ -44,13 +53,9 @@ type WorksData = {
 type APITrainData = TrainData[];
 type APIWorksData = WorksData[];
 
-// API_URL will be set at buildtime
-const API_URL = '{{API_URL}}';
 const DEFAULT_CENTER_X = 50.502;
 const DEFAULT_CENTER_Y = 4.335;
 const DEFAULT_ZOOM = 8;
-const Leaflet = window.L;
-const MT_KEY = 'RnGNHRQeMSeyIoQKPB99';
 
 let map: L.Map = null;
 let trainMarkerLayer: L.LayerGroup = null;
@@ -97,7 +102,7 @@ function addStats(trains: APITrainData): HTMLElement {
     const avgDelay = totalDelay / trains.length;
 
     // Create the stats div
-    const div = Leaflet.DomUtil.create('div', 'info legend');
+    const div = L.DomUtil.create('div', 'info legend');
     div.innerHTML =
       '<strong>Stats</strong><br>' +
       `Average delay: ${Math.round(avgDelay / 0.6) / 100} minutes <br>` +
@@ -112,14 +117,14 @@ function addStats(trains: APITrainData): HTMLElement {
 
 function drawStops(stops: StopTime[]) {
     paths.clearLayers();
-    Leaflet.polyline(stops.map((stop) => [
+    L.polyline(stops.map((stop) => [
         stop.lat,
         stop.lon
     ])).addTo(paths);
 }
 
 function createTrainMarker(color: string, train: TrainData): L.Marker {
-    const trainIcon = Leaflet.divIcon({
+    const trainIcon = L.divIcon({
         'className': 'myDivIcon',
         'html': `<i class='fa fa-train' style='color: ${color}'></i>`,
         'iconAnchor': [
@@ -131,7 +136,7 @@ function createTrainMarker(color: string, train: TrainData): L.Marker {
             20
         ]
     });
-    return Leaflet.marker(
+    return L.marker(
         [
             train.estimated_lat,
             train.estimated_lon
@@ -173,8 +178,8 @@ function createTrainPopup(train: TrainData) {
 
     const currStation = train.stops[train.stop_index];
 
-    currentPopup = Leaflet.popup({
-        'offset': new Leaflet.Point(0, -3)
+    currentPopup = L.popup({
+        'offset': new L.Point(0, -3)
     })
         .setLatLng([
             train.estimated_lat,
@@ -223,7 +228,7 @@ function drawTrain(train: TrainData) {
 }
 
 function createWorksMarker(works: WorksData): L.Marker {
-    const trainIcon = Leaflet.divIcon({
+    const trainIcon = L.divIcon({
         'className': 'myDivIcon',
         'html': '<i class="fa fa-exclamation-triangle" style="color: red"></i>',
         'iconAnchor': [
@@ -235,7 +240,7 @@ function createWorksMarker(works: WorksData): L.Marker {
             20
         ]
     });
-    return Leaflet.marker(
+    return L.marker(
         [
             works.impacted_station.lat,
             works.impacted_station.lon
@@ -257,8 +262,8 @@ function createWorksPopup(works: WorksData) {
 
     selected = works.id;
 
-    currentPopup = Leaflet.popup({
-        'offset': new Leaflet.Point(0, -3)
+    currentPopup = L.popup({
+        'offset': new L.Point(0, -3)
     })
         .setLatLng([
             works.impacted_station.lat,
@@ -304,13 +309,13 @@ function drawWorksData(works: APIWorksData) {
 
 function drawStats(data: APITrainData) {
     statsControl.remove();
-    statsControl = new Leaflet.Control({'position': 'bottomleft'});
+    statsControl = new L.Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addStats(data);
     statsControl.addTo(map);
 }
 
 function addError(error: Error): HTMLElement {
-    const div = Leaflet.DomUtil.create(
+    const div = L.DomUtil.create(
         'div',
         'info error'
     );
@@ -331,7 +336,7 @@ function handleError(error: Error) {
     console.error(error);
 
     statsControl.remove();
-    statsControl = new Leaflet.Control({'position': 'bottomleft'});
+    statsControl = new L.Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addError(
         error
     );
@@ -339,7 +344,7 @@ function handleError(error: Error) {
 }
 
 function addLegend(): HTMLElement {
-    const div = Leaflet.DomUtil.create(
+    const div = L.DomUtil.create(
         'div',
         'info legend'
     );
@@ -353,14 +358,14 @@ function addLegend(): HTMLElement {
 }
 
 function getTrains() {
-    fetch(`${API_URL}/trains`)
+    fetch(`${config.API_URL}/trains`)
         .then((res) => res.json())
         .then(drawTrainData)
         .catch(handleError);
 }
 
 function getWorks() {
-    fetch(`${API_URL}/works`)
+    fetch(`${config.API_URL}/works`)
         .then((res) => res.json())
         .then(drawWorksData)
         .catch(handleError);
@@ -368,8 +373,8 @@ function getWorks() {
 
 function addLayers() {
     // Add background layer
-    Leaflet.tileLayer(
-        `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${MT_KEY}`,
+    L.tileLayer(
+        `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${config.MT_KEY}`,
         {
             'attribution':
                 '<a href="https://www.maptiler.com/copyright/"' +
@@ -380,7 +385,7 @@ function addLayers() {
     ).addTo(map);
 
     // Add OpenRailwayMap layer
-    const openrailwaymap = new Leaflet.TileLayer(
+    const openrailwaymap = new L.TileLayer(
         'http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
         {
             'attribution':
@@ -396,12 +401,12 @@ function addLayers() {
     );
 
     // Add empty layers for the routes and markers
-    paths = Leaflet.layerGroup().addTo(map);
-    trainMarkerLayer = Leaflet.layerGroup().addTo(map);
-    worksMarkerLayer = Leaflet.layerGroup().addTo(map);
+    paths = L.layerGroup().addTo(map);
+    trainMarkerLayer = L.layerGroup().addTo(map);
+    worksMarkerLayer = L.layerGroup().addTo(map);
 
     // Add the layer control box
-    Leaflet.control.layers(
+    L.control.layers(
         {},
         {
             'OpenRailwayMap': openrailwaymap,
@@ -420,7 +425,7 @@ function update() {
 }
 
 function onLoad() {
-    map = Leaflet.map('leafletMap').setView(
+    map = L.map('leafletMap').setView(
         [
             DEFAULT_CENTER_X,
             DEFAULT_CENTER_Y
@@ -431,12 +436,12 @@ function onLoad() {
     addLayers();
 
     // Add the legend
-    const legend = new Leaflet.Control({'position': 'topright'});
+    const legend = new L.Control({'position': 'topright'});
     legend.onAdd = addLegend;
     legend.addTo(map);
 
     // Add an (empty) box for the stats
-    statsControl = new Leaflet.Control({'position': 'bottomleft'});
+    statsControl = new L.Control({'position': 'bottomleft'});
 
     // Clear the routes when just the map is clicked
     map.on(

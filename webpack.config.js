@@ -9,7 +9,7 @@ module.exports = {
         filename: "delaymap.js",
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".js", ".json"]
+        extensions: [".ts", ".json"]
     },
     module: {
         rules: [
