@@ -306,6 +306,14 @@ function drawWorks(works: WorksData) {
         }
     );
 
+    // Show the works on click
+    marker.on(
+        'click',
+        () => {
+            createWorksPopup(works);
+        }
+    );
+
     // Show the popup already if it was selected before it was redrawn
     if (selected === works.id) {
         createWorksPopup(works);
