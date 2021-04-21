@@ -19,8 +19,12 @@ jobs:
         node-version: v15
     - name: Install dependencies
       run: npm install
+    - name: Setup config.json
+      run: 'echo $CONFIG_JSON > src/config.json'
+      env:
+        CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
     - name: Build the frontend
-      run: API_URL=https://delaymap.robbevanherck.be npm run build
+      run: npm run build
     - name: Run tests
       run: npm test
     - name: Copy to the server
