@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Build the frontend
-      run: API_URL=https://delaymap.robbevanherck.be/trains npm run build
+      run: API_URL=https://delaymap.robbevanherck.be npm run build
     - name: Run tests
       run: npm test
     - name: Copy to the server
