@@ -6,7 +6,7 @@
   "scripts": {
     "test": "eslint src/",
     "serve": "node serve.js",
-    "build": "mkdir -p ./dist && cp -r static/ dist/ && cp src/* dist/ && sed -i \"s@{API_URL}@${API_URL:-http://localhost:8000/trains}@g\" dist/delaymap.js",
+    "build": "mkdir -p ./dist && cp -r static/ dist/ && cp src/* dist/ && sed -i \"s@{{API_URL}}@${API_URL:-http://localhost:8000}@g\" dist/delaymap.js",
     "preserve": "npm run build"
   },
   "repository": {

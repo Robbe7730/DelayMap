@@ -4,7 +4,7 @@
  */
 
 /**
- * @typedef Stop
+ * @typedef StopTime
  * @type {object}
  * @property {string} name - The name of the stop.
  * @property {number} lat - The latitude of the stop.
@@ -25,7 +25,7 @@
  * @type {object}
  * @property {string} id - The id of this train.
  * @property {string} name - The name of the train.
- * @property {Stop[]} stops - The stops of the train.
+ * @property {StopTime[]} stops - The stops of the train.
  * @property {number} stop_index - The index of the current stops in stops.
  * @property {boolean} is_stopped - True if the train is currently in a station.
  * @property {number} estimated_lat - The estimated latitude of the train.
@@ -33,12 +33,39 @@
  */
 
 /**
- * @typedef APIData
+ * @typedef Stop
+ * @type {object}
+ * @property {string} name - The name of this stop.
+ * @property {number} lat - The latitude of the stop.
+ * @property {number} lon - The longitude of the stop.
+ * @property {string} stop_id - The unique id of this stop.
+ */
+
+/**
+ * @typedef WorksData
+ * @type {object}
+ * @property {string} id - The id of this stop.
+ * @property {string} name - The readable name of this stop.
+ * @property {string} message - The reason for the works, as a HTML string.
+ * @property {string} start_date - The date the works started (DD.MM.YY).
+ * @property {string} end_date - The date the works will end (DD.MM.YY).
+ * @property {string} start_time - The time the works started (HH:MM).
+ * @property {string} end_time - The time the works will end (HH:MM).
+ * @property {Stop} impacted_station - The station impacted by the works.
+ */
+
+/**
+ * @typedef APITrainData
  * @type {TrainData[]}
  */
 
+/**
+ * @typedef APIWorksData
+ * @type {WorksData[]}
+ */
+
 // API_URL will be set at buildtime
-const API_URL = '{API_URL}';
+const API_URL = '{{API_URL}}';
 const DEFAULT_CENTER_X = 50.502;
 const DEFAULT_CENTER_Y = 4.335;
 const DEFAULT_ZOOM = 8;
@@ -46,7 +73,8 @@ const Leaflet = window.L;
 const MT_KEY = 'RnGNHRQeMSeyIoQKPB99';
 
 let map = null;
-let markers = null;
+let trainMarkerLayer = null;
+let worksMarkerLayer = null;
 let paths = null;
 let statsControl = null;
 let selected = null;
@@ -56,7 +84,7 @@ let currentPopup = null;
 /**
  * Fill in the statistics field.
  *
- * @param {APIData} trains - The train data.
+ * @param {APITrainData} trains - The train data.
  * @returns {HTMLElement} The div to display.
  */
 function addStats(trains) {
@@ -113,7 +141,7 @@ function addStats(trains) {
 /**
  * Draw a line between the stops given.
  *
- * @param {Stop[]} stops - The stops to draw.
+ * @param {StopTime[]} stops - The stops to draw.
  */
 function drawStops(stops) {
     paths.clearLayers();
@@ -199,7 +227,7 @@ function removePopup() {
  *
  * @param {TrainData} train - The train to draw the popup for.
  */
-function createPopup(train) {
+function createTrainPopup(train) {
     removePopup();
 
     selected = train.id;
@@ -229,13 +257,13 @@ function drawTrain(train) {
     const color = getColor(getDelay(train));
 
     // Create the marker
-    const marker = createTrainMarker(color, train).addTo(markers);
+    const marker = createTrainMarker(color, train).addTo(trainMarkerLayer);
 
     // Show the popup on hover
     marker.on(
         'mouseover',
         () => {
-            createPopup(train);
+            createTrainPopup(train);
         }
     );
     marker.on(
@@ -250,31 +278,127 @@ function drawTrain(train) {
         'click',
         () => {
             drawStops(train.stops);
-            createPopup(train);
+            createTrainPopup(train);
         }
     );
 
     // Show the popup already if it was selected before it was redrawn
     if (selected === train.id) {
-        createPopup(train);
+        createTrainPopup(train);
     }
+}
+
+/**
+ * Create a marker for one works.
+ *
+ * @param {WorksData} works - The works to display.
+ * @returns {Leaflet.divIcon} The icon.
+ */
+function createWorksMarker(works) {
+    const trainIcon = Leaflet.divIcon({
+        'className': 'myDivIcon',
+        'html': '<i class="fa fa-exclamation-triangle" style="color: red"></i>',
+        'iconAnchor': [
+            5,
+            10
+        ],
+        'iconSize': [
+            20,
+            20
+        ]
+    });
+    return Leaflet.marker(
+        [
+            works.impacted_station.lat,
+            works.impacted_station.lon
+        ],
+        {
+            'icon': trainIcon,
+            works
+        }
+    );
 }
 
 /**
  * Draw the trains on the map.
  *
- * @param {APIData} trains - The data to draw.
+ * @param {APITrainData} trains - The data to draw.
  */
 function drawTrains(trains) {
-    markers.clearLayers();
+    trainMarkerLayer.clearLayers();
 
     trains.forEach(drawTrain);
 }
 
 /**
+ * Create the popup for works.
+ *
+ * @param {WorksData} works - The works to draw the popup for.
+ */
+function createWorksPopup(works) {
+    removePopup();
+
+    selected = works.id;
+
+    currentPopup = Leaflet.popup({
+        'offset': new Leaflet.Point(0, -3)
+    })
+        .setLatLng([
+            works.impacted_station.lat,
+            works.impacted_station.lon
+        ])
+        .setContent(`<strong>${works.name}</strong><br />` +
+                    `Ending ${works.end_date} ${works.end_time}<br />` +
+                    `${works.message}`)
+        .openOn(map);
+    currentPopup.on('remove', removePopup);
+}
+
+/**
+ * Draw one works on the map with the right position.
+ *
+ * @param {WorksData} works - The works to draw.
+ */
+function drawWorks(works) {
+    // Create the marker
+    const marker = createWorksMarker(works).addTo(worksMarkerLayer);
+
+    // Show the popup on hover
+    marker.on(
+        'mouseover',
+        () => {
+            createWorksPopup(works);
+        }
+    );
+    marker.on(
+        'mouseout',
+        () => {
+            removePopup();
+        }
+    );
+
+    // Show the popup already if it was selected before it was redrawn
+    if (selected === works.id) {
+        createWorksPopup(works);
+    }
+}
+
+
+/**
+ * Draw the works on the map.
+ *
+ * @param {APIWorksData} works - The data to draw.
+ */
+function drawWorksData(works) {
+    worksMarkerLayer.clearLayers();
+
+    works.forEach(drawWorks);
+}
+
+/**
  * Remove the old statsControl field and add a new one.
  *
- * @param {APIData} data - The data to draw.
+ * @param {APITrainData} data - The data to draw.
  */
 function drawStats(data) {
     statsControl.remove();
@@ -305,9 +429,9 @@ function addError(error) {
 /**
  * Draw the requested data, both the trains and the statistics.
  *
- * @param {APIData} data - The data to draw.
+ * @param {APITrainData} data - The data to draw.
  */
-function drawData(data) {
+function drawTrainData(data) {
     drawTrains(data);
     drawStats(data);
 }
@@ -349,12 +473,22 @@ function addLegend() {
 }
 
 /**
- * Get the trains and call drawData with the parsed JSON.
+ * Get the trains and call drawTrainData with the parsed JSON.
  */
 function getTrains() {
-    fetch(API_URL)
+    fetch(`${API_URL}/trains`)
         .then((res) => res.json())
-        .then(drawData)
+        .then(drawTrainData)
+        .catch(handleError);
+}
+
+/**
+ * Get the works and call drawWorks with the parsed JSON.
+ */
+function getWorks() {
+    fetch(`${API_URL}/works`)
+        .then((res) => res.json())
+        .then(drawWorksData)
         .catch(handleError);
 }
 
@@ -392,7 +526,8 @@ function addLayers() {
 
     // Add empty layers for the routes and markers
     paths = Leaflet.layerGroup().addTo(map);
-    markers = Leaflet.layerGroup().addTo(map);
+    trainMarkerLayer = Leaflet.layerGroup().addTo(map);
+    worksMarkerLayer = Leaflet.layerGroup().addTo(map);
 
     // Add the layer control box
     Leaflet.control.layers(
@@ -406,6 +541,14 @@ function addLayers() {
             'position': 'topleft'
         }
     ).addTo(map);
+}
+
+/**
+ * Update the data shown by DelayMap.
+ */
+function update() {
+    getTrains();
+    getWorks();
 }
 
 /**
@@ -439,10 +582,10 @@ function onLoad() { // eslint-disable-line no-unused-vars
         }
     );
 
-    // Load (and draw) the trains every 5 seconds
-    getTrains();
+    // Update every 5 seconds
+    update();
     setInterval(
-        getTrains,
+        update,
         5000
     );
 }
