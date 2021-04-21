@@ -3,8 +3,19 @@
  * @author Robbe Van Herck
  */
 
-import L = require('leaflet');
 import * as config from './config.json';
+import {
+    Control,
+    DivIcon,
+    DomUtil,
+    LayerGroup,
+    Map,
+    Marker,
+    Point,
+    Polyline,
+    Popup,
+    TileLayer
+} from 'leaflet';
 
 declare global {
     interface Window {
@@ -62,13 +73,13 @@ const DEFAULT_CENTER_X = 50.502;
 const DEFAULT_CENTER_Y = 4.335;
 const DEFAULT_ZOOM = 8;
 
-let map: L.Map;
-let trainMarkerLayer: L.LayerGroup;
-let worksMarkerLayer: L.LayerGroup;
-let paths: L.LayerGroup;
-let statsControl: L.Control;
+let map: Map;
+let trainMarkerLayer: LayerGroup;
+let worksMarkerLayer: LayerGroup;
+let paths: LayerGroup;
+let statsControl: Control;
 let selected: string;
-let currentPopup: L.Popup;
+let currentPopup: Popup;
 
 function addStats(trains: APITrainData): HTMLElement {
     let green = 0;
@@ -107,7 +118,7 @@ function addStats(trains: APITrainData): HTMLElement {
     const avgDelay = totalDelay / trains.length;
 
     // Create the stats div
-    const div = L.DomUtil.create('div', 'info legend');
+    const div = DomUtil.create('div', 'info legend');
     div.innerHTML =
       '<strong>Stats</strong><br>' +
       `Average delay: ${Math.round(avgDelay / 0.6) / 100} minutes <br>` +
@@ -122,7 +133,7 @@ function addStats(trains: APITrainData): HTMLElement {
 
 function drawStops(stops: StopTime[]) {
     paths.clearLayers();
-    L.polyline(stops
+    new Polyline(stops
         .filter((stop: StopTime):stop is FullStopTime =>
             typeof stop.lat !== 'undefined' && typeof stop.lon !== 'undefined')
         .map((stop: FullStopTime) => [
@@ -132,8 +143,8 @@ function drawStops(stops: StopTime[]) {
         .addTo(paths);
 }
 
-function createTrainMarker(color: string, train: TrainData): L.Marker {
-    const trainIcon = L.divIcon({
+function createTrainMarker(color: string, train: TrainData): Marker {
+    const trainIcon = new DivIcon({
         'className': 'myDivIcon',
         'html': `<i class='fa fa-train' style='color: ${color}'></i>`,
         'iconAnchor': [
@@ -145,7 +156,7 @@ function createTrainMarker(color: string, train: TrainData): L.Marker {
             20
         ]
     });
-    return L.marker(
+    return new Marker(
         [
             train.estimatedLat,
             train.estimatedLon
@@ -190,8 +201,8 @@ function createTrainPopup(train: TrainData) {
     const currStation = train.stops[train.stopIndex];
     const name = currStation?.name;
 
-    currentPopup = L.popup({
-        'offset': new L.Point(0, -3)
+    currentPopup = new Popup({
+        'offset': new Point(0, -3)
     })
         .setLatLng([
             train.estimatedLat,
@@ -239,8 +250,8 @@ function drawTrain(train: TrainData) {
     }
 }
 
-function createWorksMarker(works: WorksData): L.Marker {
-    const trainIcon = L.divIcon({
+function createWorksMarker(works: WorksData): Marker {
+    const trainIcon = new DivIcon({
         'className': 'myDivIcon',
         'html': '<i class="fa fa-exclamation-triangle" style="color: red"></i>',
         'iconAnchor': [
@@ -252,7 +263,7 @@ function createWorksMarker(works: WorksData): L.Marker {
             20
         ]
     });
-    return L.marker(
+    return new Marker(
         [
             works.impactedStation?.lat || 0,
             works.impactedStation?.lon || 0
@@ -274,8 +285,8 @@ function createWorksPopup(works: WorksData) {
 
     selected = works.id;
 
-    currentPopup = L.popup({
-        'offset': new L.Point(0, -3)
+    currentPopup = new Popup({
+        'offset': new Point(0, -3)
     })
         .setLatLng([
             works.impactedStation?.lat || 0,
@@ -329,13 +340,13 @@ function drawWorksData(works: APIWorksData) {
 
 function drawStats(data: APITrainData) {
     statsControl.remove();
-    statsControl = new L.Control({'position': 'bottomleft'});
+    statsControl = new Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addStats(data);
     statsControl.addTo(map);
 }
 
 function addError(error: Error): HTMLElement {
-    const div = L.DomUtil.create(
+    const div = DomUtil.create(
         'div',
         'info error'
     );
@@ -357,13 +368,13 @@ function handleError(error: Error) {
     console.error(error);
 
     statsControl.remove();
-    statsControl = new L.Control({'position': 'bottomleft'});
+    statsControl = new Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addError(error);
     statsControl.addTo(map);
 }
 
 function addLegend(): HTMLElement {
-    const div = L.DomUtil.create(
+    const div = DomUtil.create(
         'div',
         'info legend'
     );
@@ -392,7 +403,7 @@ function getWorks() {
 
 function addLayers() {
     // Add background layer
-    L.tileLayer(
+    new TileLayer(
         `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${
             config.MT_KEY
         }`,
@@ -406,7 +417,7 @@ function addLayers() {
     ).addTo(map);
 
     // Add OpenRailwayMap layer
-    const openrailwaymap = new L.TileLayer(
+    const openrailwaymap = new TileLayer(
         'http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
         {
             'attribution':
@@ -421,13 +432,18 @@ function addLayers() {
         }
     );
 
-    // Add empty layers for the routes and markers
-    paths = L.layerGroup().addTo(map);
-    trainMarkerLayer = L.layerGroup().addTo(map);
-    worksMarkerLayer = L.layerGroup().addTo(map);
+    // Create the layers
+    paths = new LayerGroup();
+    trainMarkerLayer = new LayerGroup();
+    worksMarkerLayer = new LayerGroup();
+
+    // Add them to the map
+    paths.addTo(map);
+    trainMarkerLayer.addTo(map);
+    worksMarkerLayer.addTo(map);
 
     // Add the layer control box
-    L.control.layers(
+    new Control.Layers(
         {},
         {
             'OpenRailwayMap': openrailwaymap,
@@ -446,7 +462,7 @@ function update() {
 }
 
 function onLoad() {
-    map = L.map('leafletMap').setView(
+    map = new Map('leafletMap').setView(
         [
             DEFAULT_CENTER_X,
             DEFAULT_CENTER_Y
@@ -457,12 +473,12 @@ function onLoad() {
     addLayers();
 
     // Add the legend
-    const legend = new L.Control({'position': 'topright'});
+    const legend = new Control({'position': 'topright'});
     legend.onAdd = addLegend;
     legend.addTo(map);
 
     // Add an (empty) box for the stats
-    statsControl = new L.Control({'position': 'bottomleft'});
+    statsControl = new Control({'position': 'bottomleft'});
 
     // Clear the routes when just the map is clicked
     map.on(
