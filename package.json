@@ -5,7 +5,6 @@
   "main": "server.js",
   "scripts": {
     "test": "eslint src/",
-
     "build": "webpack --config webpack.config.js --mode=production",
     "serve": "node serve.js",
     "preserve": "npm run build"
@@ -21,6 +20,7 @@
   },
   "homepage": "https://github.com/Robbe7730/DelayMap#readme",
   "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
     "copy-webpack-plugin": "^8.1.1",
     "express": "^4.17.1",
     "ts-loader": "^9.0.2",

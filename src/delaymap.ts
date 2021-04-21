@@ -57,13 +57,13 @@ const DEFAULT_CENTER_X = 50.502;
 const DEFAULT_CENTER_Y = 4.335;
 const DEFAULT_ZOOM = 8;
 
-let map: L.Map = null;
-let trainMarkerLayer: L.LayerGroup = null;
-let worksMarkerLayer: L.LayerGroup = null;
-let paths: L.LayerGroup = null;
-let statsControl: L.Control = null;
-let selected: string = null;
-let currentPopup: L.Popup = null;
+let map: L.Map;
+let trainMarkerLayer: L.LayerGroup;
+let worksMarkerLayer: L.LayerGroup;
+let paths: L.LayerGroup;
+let statsControl: L.Control;
+let selected: string;
+let currentPopup: L.Popup;
 
 function addStats(trains: APITrainData): HTMLElement {
     let green = 0;
@@ -78,9 +78,13 @@ function addStats(trains: APITrainData): HTMLElement {
         const currStation = train.stops[train.stop_index];
 
         // Calculate the delay
-        const delay = train.is_stopped
-            ? currStation.departure_delay
-            : currStation.arrival_delay;
+        let delay = 0;
+
+        if (currStation) {
+            delay = train.is_stopped
+                ? currStation.departure_delay
+                : currStation.arrival_delay;
+        }
 
         // Categorize it
         if (delay === 0) {
@@ -158,9 +162,11 @@ function getColor(delay: number): string {
 function getDelay(train: TrainData): number {
     const currStation = train.stops[train.stop_index];
 
-    return train.is_stopped
-        ? currStation.departure_delay
-        : currStation.arrival_delay;
+    return currStation
+                ? train.is_stopped
+                    ? currStation.departure_delay
+                    : currStation.arrival_delay
+                : 0;
 }
 
 function removePopup() {
@@ -168,7 +174,7 @@ function removePopup() {
         currentPopup.remove();
     }
 
-    selected = null;
+    selected = "";
 }
 
 function createTrainPopup(train: TrainData) {
@@ -177,6 +183,7 @@ function createTrainPopup(train: TrainData) {
     selected = train.id;
 
     const currStation = train.stops[train.stop_index];
+    const name = currStation?.name;
 
     currentPopup = L.popup({
         'offset': new L.Point(0, -3)
@@ -186,7 +193,7 @@ function createTrainPopup(train: TrainData) {
             train.estimated_lon
         ])
         .setContent(`<strong>${train.name}</strong>: ` +
-      `+${getDelay(train) / 60} min<br>Next stop: ${currStation.name}`)
+      `+${getDelay(train) / 60} min<br>Next stop: ${name}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
 }
@@ -448,7 +455,7 @@ function onLoad() {
         'click',
         () => {
             drawStops([]);
-            selected = null;
+            selected = "";
         }
     );
 
