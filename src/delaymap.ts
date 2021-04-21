@@ -6,18 +6,16 @@
 import L = require("leaflet");
 import * as config from "./config.json";
 
-export interface DelayMapWindow extends Window {
-    onLoad: Function;
+export interface Window {
+    onLoad: () => void;
 }
-
-declare let window: DelayMapWindow;
 
 interface StopTime {
     name: string,
-    arrival_delay: number,
-    departure_delay: number,
-    arrival_timestamp: number,
-    departure_timestamp: number,
+    arrivalDelay: number,
+    departureDelay: number,
+    arrivalTimestamp: number,
+    departureTimestamp: number,
     lat?: number,
     lon?: number,
 }
@@ -27,32 +25,32 @@ interface FullStopTime extends StopTime {
     lon: number
 }
 
-type TrainData = {
+interface TrainData {
     id: string,
     name: string,
     stops: StopTime[],
-    stop_index: number,
-    is_stopped: boolean,
-    estimated_lat: number,
-    estimated_lon: number,
+    stopIndex: number,
+    isStopped: boolean,
+    estimatedLat: number,
+    estimatedLon: number,
 }
 
-type Stop = {
+interface Stop {
     name: string,
-    stop_id: string,
+    stopId: string,
     lat?: number,
     lon?: number,
 }
 
-type WorksData = {
+interface WorksData {
     id: string,
     name: string,
     message: string,
-    start_date: string,
-    start_time: string, 
-    end_date: string,
-    end_time: string,
-    impacted_station?: Stop,
+    startDate: string,
+    startTime: string,
+    endDate: string,
+    endTime: string,
+    impactedStation?: Stop,
 }
 
 type APITrainData = TrainData[];
@@ -80,15 +78,15 @@ function addStats(trains: APITrainData): HTMLElement {
     // Process each train
     trains.forEach((train) => {
         // Find the current station of the train
-        const currStation = train.stops[train.stop_index];
+        const currStation = train.stops[train.stopIndex];
 
         // Calculate the delay
         let delay = 0;
 
         if (currStation) {
-            delay = train.is_stopped
-                ? currStation.departure_delay
-                : currStation.arrival_delay;
+            delay = train.isStopped
+                ? currStation.departureDelay
+                : currStation.arrivalDelay;
         }
 
         // Categorize it
@@ -152,8 +150,8 @@ function createTrainMarker(color: string, train: TrainData): L.Marker {
     });
     return L.marker(
         [
-            train.estimated_lat,
-            train.estimated_lon
+            train.estimatedLat,
+            train.estimatedLon
         ],
         {
             'icon': trainIcon
@@ -170,12 +168,12 @@ function getColor(delay: number): string {
 }
 
 function getDelay(train: TrainData): number {
-    const currStation = train.stops[train.stop_index];
+    const currStation = train.stops[train.stopIndex];
 
     return currStation
-                ? train.is_stopped
-                    ? currStation.departure_delay
-                    : currStation.arrival_delay
+                ? train.isStopped
+                    ? currStation.departureDelay
+                    : currStation.arrivalDelay
                 : 0;
 }
 
@@ -192,15 +190,15 @@ function createTrainPopup(train: TrainData) {
 
     selected = train.id;
 
-    const currStation = train.stops[train.stop_index];
+    const currStation = train.stops[train.stopIndex];
     const name = currStation?.name;
 
     currentPopup = L.popup({
         'offset': new L.Point(0, -3)
     })
         .setLatLng([
-            train.estimated_lat,
-            train.estimated_lon
+            train.estimatedLat,
+            train.estimatedLon
         ])
         .setContent(`<strong>${train.name}</strong>: ` +
       `+${getDelay(train) / 60} min<br>Next stop: ${name}`)
@@ -259,8 +257,8 @@ function createWorksMarker(works: WorksData): L.Marker {
     });
     return L.marker(
         [
-            works.impacted_station?.lat || 0,
-            works.impacted_station?.lon || 0
+            works.impactedStation?.lat || 0,
+            works.impactedStation?.lon || 0
         ],
         {
             'icon': trainIcon,
@@ -283,11 +281,11 @@ function createWorksPopup(works: WorksData) {
         'offset': new L.Point(0, -3)
     })
         .setLatLng([
-            works.impacted_station?.lat || 0,
-            works.impacted_station?.lon || 0
+            works.impactedStation?.lat || 0,
+            works.impactedStation?.lon || 0
         ])
         .setContent(`<strong>${works.name}</strong><br />` +
-                    `Ending ${works.end_date} ${works.end_time}<br />` +
+                    `Ending ${works.endDate} ${works.endTime}<br />` +
                     `${works.message}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
@@ -477,4 +475,4 @@ function onLoad() {
     );
 }
 
-window.onLoad = onLoad;
+(window as any).onLoad = onLoad;
