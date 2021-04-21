@@ -6,8 +6,8 @@
   "scripts": {
     "test": "eslint src/",
     "build": "webpack --config webpack.config.js --mode=production",
-    "serve": "node serve.js",
-    "preserve": "npm run build"
+    "serve": "webpack serve",
+    "dev": "webpack serve --mode=development"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
     "express": "^4.17.1",
     "ts-loader": "^9.0.2",
     "webpack": "^5.35.0",
-    "webpack-cli": "^4.6.0"
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "@types/leaflet": "^1.7.0",

@@ -21,5 +21,5 @@ The API can be found at <https://github.com/Robbe7730/DelayMapI>
 }
 ```
 
-3. Start the frontend by running `npm run serve`
+3. Start the frontend by running `npm run dev`
 4. Go to https://localhost:8080/
