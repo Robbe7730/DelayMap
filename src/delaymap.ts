@@ -12,14 +12,19 @@ export interface DelayMapWindow extends Window {
 
 declare let window: DelayMapWindow;
 
-type StopTime = {
+interface StopTime {
     name: string,
-    lat: number,
-    lon: number,
     arrival_delay: number,
     departure_delay: number,
     arrival_timestamp: number,
     departure_timestamp: number,
+    lat?: number,
+    lon?: number,
+}
+
+interface FullStopTime extends StopTime {
+    lat: number,
+    lon: number
 }
 
 type TrainData = {
@@ -34,9 +39,9 @@ type TrainData = {
 
 type Stop = {
     name: string,
-    lat: number,
-    lon: number,
     stop_id: string,
+    lat?: number,
+    lon?: number,
 }
 
 type WorksData = {
@@ -47,7 +52,7 @@ type WorksData = {
     start_time: string, 
     end_date: string,
     end_time: string,
-    impacted_station: Stop,
+    impacted_station?: Stop,
 }
 
 type APITrainData = TrainData[];
@@ -121,10 +126,15 @@ function addStats(trains: APITrainData): HTMLElement {
 
 function drawStops(stops: StopTime[]) {
     paths.clearLayers();
-    L.polyline(stops.map((stop) => [
-        stop.lat,
-        stop.lon
-    ])).addTo(paths);
+    L.polyline(stops
+        .filter((s: StopTime): s is FullStopTime => {
+            return (s.lat !== undefined) && (s.lon !== undefined)
+        })
+        .map((stop: FullStopTime) => [
+            stop.lat,
+            stop.lon
+        ]))
+    .addTo(paths);
 }
 
 function createTrainMarker(color: string, train: TrainData): L.Marker {
@@ -249,8 +259,8 @@ function createWorksMarker(works: WorksData): L.Marker {
     });
     return L.marker(
         [
-            works.impacted_station.lat,
-            works.impacted_station.lon
+            works.impacted_station?.lat || 0,
+            works.impacted_station?.lon || 0
         ],
         {
             'icon': trainIcon,
@@ -273,8 +283,8 @@ function createWorksPopup(works: WorksData) {
         'offset': new L.Point(0, -3)
     })
         .setLatLng([
-            works.impacted_station.lat,
-            works.impacted_station.lon
+            works.impacted_station?.lat || 0,
+            works.impacted_station?.lon || 0
         ])
         .setContent(`<strong>${works.name}</strong><br />` +
                     `Ending ${works.end_date} ${works.end_time}<br />` +
