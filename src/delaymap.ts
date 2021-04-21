@@ -3,66 +3,46 @@
  * @author Robbe Van Herck
  */
 
-/**
- * @typedef StopTime
- * @type {object}
- * @property {string} name - The name of the stop.
- * @property {number} lat - The latitude of the stop.
- * @property {number} lon - The longitude of the stop.
- * @property {number} arrival_delay - With how much delay the train will arrive
- * at the next station.
- * @property {number} departure_delay - With how much delay the train will
- * depart at the next station.
- * @property {number} arrival_timestamp - The timestamp in minutes after
- * midnight when the train will arrive at the next station.
- * @property {number} departure_timestamp - The timestamp in minutes after
- * midnight when the train will depart at the next station.
- * @property {string} stop_id - The unique id of this stop.
- */
+type StopTime = {
+    name: string,
+    lat: number,
+    lon: number,
+    arrival_delay: number,
+    departure_delay: number,
+    arrival_timestamp: number,
+    departure_timestamp: number,
+}
 
-/**
- * @typedef TrainData
- * @type {object}
- * @property {string} id - The id of this train.
- * @property {string} name - The name of the train.
- * @property {StopTime[]} stops - The stops of the train.
- * @property {number} stop_index - The index of the current stops in stops.
- * @property {boolean} is_stopped - True if the train is currently in a station.
- * @property {number} estimated_lat - The estimated latitude of the train.
- * @property {number} estimated_lon - The estimated longitude of the train.
- */
+type TrainData = {
+    id: string,
+    name: string,
+    stops: StopTime[],
+    stop_index: number,
+    is_stopped: boolean,
+    estimated_lat: number,
+    estimated_lon: number,
+}
 
-/**
- * @typedef Stop
- * @type {object}
- * @property {string} name - The name of this stop.
- * @property {number} lat - The latitude of the stop.
- * @property {number} lon - The longitude of the stop.
- * @property {string} stop_id - The unique id of this stop.
- */
+type Stop = {
+    name: string,
+    lat: number,
+    lon: number,
+    stop_id: string,
+}
 
-/**
- * @typedef WorksData
- * @type {object}
- * @property {string} id - The id of this stop.
- * @property {string} name - The readable name of this stop.
- * @property {string} message - The reason for the works, as a HTML string.
- * @property {string} start_date - The date the works started (DD.MM.YY).
- * @property {string} end_date - The date the works will end (DD.MM.YY).
- * @property {string} start_time - The time the works started (HH:MM).
- * @property {string} end_time - The time the works will end (HH:MM).
- * @property {Stop} impacted_station - The station impacted by the works.
- */
+type WorksData = {
+    id: string,
+    name: string,
+    message: string,
+    start_date: string,
+    start_time: string, 
+    end_date: string,
+    end_time: string,
+    impacted_station: Stop,
+}
 
-/**
- * @typedef APITrainData
- * @type {TrainData[]}
- */
-
-/**
- * @typedef APIWorksData
- * @type {WorksData[]}
- */
+type APITrainData = TrainData[];
+type APIWorksData = WorksData[];
 
 // API_URL will be set at buildtime
 const API_URL = '{{API_URL}}';
@@ -72,22 +52,15 @@ const DEFAULT_ZOOM = 8;
 const Leaflet = window.L;
 const MT_KEY = 'RnGNHRQeMSeyIoQKPB99';
 
-let map = null;
-let trainMarkerLayer = null;
-let worksMarkerLayer = null;
-let paths = null;
-let statsControl = null;
-let selected = null;
-let currentPopup = null;
+let map: L.Map = null;
+let trainMarkerLayer: L.LayerGroup = null;
+let worksMarkerLayer: L.LayerGroup = null;
+let paths: L.LayerGroup = null;
+let statsControl: L.Control = null;
+let selected: string = null;
+let currentPopup: L.Popup = null;
 
-
-/**
- * Fill in the statistics field.
- *
- * @param {APITrainData} trains - The train data.
- * @returns {HTMLElement} The div to display.
- */
-function addStats(trains) {
+function addStats(trains: APITrainData): HTMLElement {
     let green = 0;
     let maxDelay = 0;
     let orange = 0;
@@ -137,13 +110,7 @@ function addStats(trains) {
     return div;
 }
 
-
-/**
- * Draw a line between the stops given.
- *
- * @param {StopTime[]} stops - The stops to draw.
- */
-function drawStops(stops) {
+function drawStops(stops: StopTime[]) {
     paths.clearLayers();
     Leaflet.polyline(stops.map((stop) => [
         stop.lat,
@@ -151,14 +118,7 @@ function drawStops(stops) {
     ])).addTo(paths);
 }
 
-/**
- * Create a marker for one single train.
- *
- * @param {string} color - The color of the marker.
- * @param {TrainData} train - The train to display.
- * @returns {Leaflet.divIcon} The icon.
- */
-function createTrainMarker(color, train) {
+function createTrainMarker(color: string, train: TrainData): L.Marker {
     const trainIcon = Leaflet.divIcon({
         'className': 'myDivIcon',
         'html': `<i class='fa fa-train' style='color: ${color}'></i>`,
@@ -177,19 +137,12 @@ function createTrainMarker(color, train) {
             train.estimated_lon
         ],
         {
-            'icon': trainIcon,
-            train
+            'icon': trainIcon
         }
     );
 }
 
-/**
- * Get the color corresponding to the delay.
- *
- * @param {number} delay - The delay in seconds.
- * @returns {string} The color as a string.
- */
-function getColor(delay) {
+function getColor(delay: number): string {
     return delay === 0
         ? 'green'
         : delay <= 360
@@ -197,13 +150,7 @@ function getColor(delay) {
             : 'red';
 }
 
-/**
- * Calculate the delay of a train (either arrival or departure delay).
- *
- * @param {TrainData} train - The train to calculate the delay for.
- * @returns {number} The delay that should be used.
- */
-function getDelay(train) {
+function getDelay(train: TrainData): number {
     const currStation = train.stops[train.stop_index];
 
     return train.is_stopped
@@ -211,9 +158,6 @@ function getDelay(train) {
         : currStation.arrival_delay;
 }
 
-/**
- * Remove the current popup.
- */
 function removePopup() {
     if (currentPopup) {
         currentPopup.remove();
@@ -222,12 +166,7 @@ function removePopup() {
     selected = null;
 }
 
-/**
- * Create the popup for a train.
- *
- * @param {TrainData} train - The train to draw the popup for.
- */
-function createTrainPopup(train) {
+function createTrainPopup(train: TrainData) {
     removePopup();
 
     selected = train.id;
@@ -247,12 +186,7 @@ function createTrainPopup(train) {
     currentPopup.on('remove', removePopup);
 }
 
-/**
- * Draw one train on the map in the right color and with the right position.
- *
- * @param {TrainData} train - The train to draw.
- */
-function drawTrain(train) {
+function drawTrain(train: TrainData) {
     // Calculate the color of the marker
     const color = getColor(getDelay(train));
 
@@ -288,13 +222,7 @@ function drawTrain(train) {
     }
 }
 
-/**
- * Create a marker for one works.
- *
- * @param {WorksData} works - The works to display.
- * @returns {Leaflet.divIcon} The icon.
- */
-function createWorksMarker(works) {
+function createWorksMarker(works: WorksData): L.Marker {
     const trainIcon = Leaflet.divIcon({
         'className': 'myDivIcon',
         'html': '<i class="fa fa-exclamation-triangle" style="color: red"></i>',
@@ -314,28 +242,17 @@ function createWorksMarker(works) {
         ],
         {
             'icon': trainIcon,
-            works
         }
     );
 }
 
-/**
- * Draw the trains on the map.
- *
- * @param {APITrainData} trains - The data to draw.
- */
-function drawTrains(trains) {
+function drawTrains(trains: APITrainData) {
     trainMarkerLayer.clearLayers();
 
     trains.forEach(drawTrain);
 }
 
-/**
- * Create the popup for works.
- *
- * @param {WorksData} works - The works to draw the popup for.
- */
-function createWorksPopup(works) {
+function createWorksPopup(works: WorksData) {
     removePopup();
 
     selected = works.id;
@@ -354,12 +271,7 @@ function createWorksPopup(works) {
     currentPopup.on('remove', removePopup);
 }
 
-/**
- * Draw one works on the map with the right position.
- *
- * @param {WorksData} works - The works to draw.
- */
-function drawWorks(works) {
+function drawWorks(works: WorksData) {
     // Create the marker
     const marker = createWorksMarker(works).addTo(worksMarkerLayer);
 
@@ -384,36 +296,20 @@ function drawWorks(works) {
 }
 
 
-/**
- * Draw the works on the map.
- *
- * @param {APIWorksData} works - The data to draw.
- */
-function drawWorksData(works) {
+function drawWorksData(works: APIWorksData) {
     worksMarkerLayer.clearLayers();
 
     works.forEach(drawWorks);
 }
 
-/**
- * Remove the old statsControl field and add a new one.
- *
- * @param {APITrainData} data - The data to draw.
- */
-function drawStats(data) {
+function drawStats(data: APITrainData) {
     statsControl.remove();
-    statsControl = Leaflet.control({'position': 'bottomleft'});
+    statsControl = new Leaflet.Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addStats(data);
     statsControl.addTo(map);
 }
 
-/**
- * Add the error data to the error bar.
- *
- * @param {Error} error - The error to show.
- * @returns {HTMLElement} The div to display.
- */
-function addError(error) {
+function addError(error: Error): HTMLElement {
     const div = Leaflet.DomUtil.create(
         'div',
         'info error'
@@ -426,39 +322,23 @@ function addError(error) {
     return div;
 }
 
-/**
- * Draw the requested data, both the trains and the statistics.
- *
- * @param {APITrainData} data - The data to draw.
- */
-function drawTrainData(data) {
+function drawTrainData(data: APITrainData) {
     drawTrains(data);
     drawStats(data);
 }
 
-/**
- * Handle a fetch error.
- *
- * @param {Error} error - The error that occured.
- */
-function handleError(error) {
+function handleError(error: Error) {
     console.error(error);
 
     statsControl.remove();
-    statsControl = Leaflet.control({'position': 'bottomleft'});
+    statsControl = new Leaflet.Control({'position': 'bottomleft'});
     statsControl.onAdd = () => addError(
-        map,
         error
     );
     statsControl.addTo(map);
 }
 
-/**
- * Add the legend to the map.
- *
- * @returns {HTMLElement} The div that was created.
- */
-function addLegend() {
+function addLegend(): HTMLElement {
     const div = Leaflet.DomUtil.create(
         'div',
         'info legend'
@@ -472,9 +352,6 @@ function addLegend() {
     return div;
 }
 
-/**
- * Get the trains and call drawTrainData with the parsed JSON.
- */
 function getTrains() {
     fetch(`${API_URL}/trains`)
         .then((res) => res.json())
@@ -482,9 +359,6 @@ function getTrains() {
         .catch(handleError);
 }
 
-/**
- * Get the works and call drawWorks with the parsed JSON.
- */
 function getWorks() {
     fetch(`${API_URL}/works`)
         .then((res) => res.json())
@@ -492,9 +366,6 @@ function getWorks() {
         .catch(handleError);
 }
 
-/**
- * Add the MapTiler and OpenRailwayMap layers to the map.
- */
 function addLayers() {
     // Add background layer
     Leaflet.tileLayer(
@@ -543,17 +414,11 @@ function addLayers() {
     ).addTo(map);
 }
 
-/**
- * Update the data shown by DelayMap.
- */
 function update() {
     getTrains();
     getWorks();
 }
 
-/**
- * Setup the page.
- */
 function onLoad() { // eslint-disable-line no-unused-vars
     map = Leaflet.map('leafletMap').setView(
         [
@@ -566,12 +431,12 @@ function onLoad() { // eslint-disable-line no-unused-vars
     addLayers();
 
     // Add the legend
-    const legend = Leaflet.control({'position': 'topright'});
+    const legend = new Leaflet.Control({'position': 'topright'});
     legend.onAdd = addLegend;
     legend.addTo(map);
 
     // Add an (empty) box for the stats
-    statsControl = Leaflet.control({'position': 'bottomleft'});
+    statsControl = new Leaflet.Control({'position': 'bottomleft'});
 
     // Clear the routes when just the map is clicked
     map.on(
