@@ -419,7 +419,7 @@ function update() {
     getWorks();
 }
 
-function onLoad() { // eslint-disable-line no-unused-vars
+function onLoad() {
     map = Leaflet.map('leafletMap').setView(
         [
             DEFAULT_CENTER_X,
@@ -455,4 +455,4 @@ function onLoad() { // eslint-disable-line no-unused-vars
     );
 }
 
-
+window.onLoad = onLoad;
