@@ -105,6 +105,7 @@ let paths: LayerGroup;
 let statsControl: Control;
 let selected: string;
 let currentPopup: Popup;
+let selectedClicked = false;
 
 function formatDelay(delay: number): string {
     const delayMinutes = Math.floor(delay / 60);
@@ -225,18 +226,19 @@ function getDelay(train: TrainData): number {
         : 0;
 }
 
-function removePopup() {
-    if (currentPopup) {
+function removePopup(force: boolean) {
+    if (currentPopup && (!selectedClicked || force)) {
         currentPopup.remove();
     }
 
     selected = '';
 }
 
-function createTrainPopup(train: TrainData) {
-    removePopup();
+function createTrainPopup(train: TrainData, isClicked: boolean) {
+    removePopup(true);
 
     selected = train.id;
+    selectedClicked = isClicked;
 
     const currStation = train.stops[train.stopIndex];
     const name = currStation?.name;
@@ -251,7 +253,7 @@ function createTrainPopup(train: TrainData) {
         .setContent(`<strong>${train.name}</strong>: ` +
                 `+${formatDelay(getDelay(train))} min<br>Next stop: ${name}`)
         .openOn(map);
-    currentPopup.on('remove', removePopup);
+    currentPopup.on('remove', () => removePopup(true));
 }
 
 function drawTrain(train: TrainData) {
@@ -265,13 +267,13 @@ function drawTrain(train: TrainData) {
     marker.on(
         'mouseover',
         () => {
-            createTrainPopup(train);
+            createTrainPopup(train, false);
         }
     );
     marker.on(
         'mouseout',
         () => {
-            removePopup();
+            removePopup(false);
         }
     );
 
@@ -280,13 +282,13 @@ function drawTrain(train: TrainData) {
         'click',
         () => {
             drawStops(train.stops);
-            createTrainPopup(train);
+            createTrainPopup(train, true);
         }
     );
 
     // Show the popup already if it was selected before it was redrawn
     if (selected === train.id) {
-        createTrainPopup(train);
+        createTrainPopup(train, selectedClicked);
     }
 }
 
@@ -324,10 +326,11 @@ function makeLink(url: string, text: string) {
     return `<a href="${url}">${text}</a>`;
 }
 
-function createWorksPopup(works: WorksData) {
-    removePopup();
+function createWorksPopup(works: WorksData, isClicked: boolean) {
+    removePopup(true);
 
     selected = works.id;
+    selectedClicked = isClicked;
 
     const urls = works.urls.map((url) => makeLink(url.url, url.label));
 
@@ -348,7 +351,7 @@ function createWorksPopup(works: WorksData) {
                     `${works.message}<br />` +
                     `${urlText}`)
         .openOn(map);
-    currentPopup.on('remove', removePopup);
+    currentPopup.on('remove', () => removePopup(true));
 }
 
 function drawWorks(works: WorksData) {
@@ -359,13 +362,13 @@ function drawWorks(works: WorksData) {
     marker.on(
         'mouseover',
         () => {
-            createWorksPopup(works);
+            createWorksPopup(works, false);
         }
     );
     marker.on(
         'mouseout',
         () => {
-            removePopup();
+            removePopup(false);
         }
     );
 
@@ -373,13 +376,13 @@ function drawWorks(works: WorksData) {
     marker.on(
         'click',
         () => {
-            createWorksPopup(works);
+            createWorksPopup(works, true);
         }
     );
 
     // Show the popup already if it was selected before it was redrawn
     if (selected === works.id) {
-        createWorksPopup(works);
+        createWorksPopup(works, selectedClicked);
     }
 }
 
