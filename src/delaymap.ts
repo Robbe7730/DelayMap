@@ -531,7 +531,8 @@ function addLayers() {
         {},
         {
             'OpenRailwayMap': openrailwaymap,
-            'Routes': paths
+            'Routes': paths,
+            'Works': worksMarkerLayer
         },
         {
             'collapsed': false,
