@@ -323,7 +323,7 @@ function drawTrains(trains: APITrainData) {
 }
 
 function makeLink(url: string, text: string) {
-    return `<a href="${url}">${text}</a>`;
+    return `<a href="${url}" target="_blank">${text}</a>`;
 }
 
 function createWorksPopup(works: WorksData, isClicked: boolean) {
