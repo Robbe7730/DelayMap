@@ -60,6 +60,11 @@ interface Stop {
     lon?: number,
 }
 
+interface WorksURL {
+    url: string,
+    label: string,
+}
+
 interface WorksData {
     id: string,
     name: string,
@@ -68,6 +73,7 @@ interface WorksData {
     startTime: string,
     endDate: string,
     endTime: string,
+    urls: WorksURL[],
     impactedStation?: Stop,
 }
 
@@ -314,10 +320,21 @@ function drawTrains(trains: APITrainData) {
     trains.forEach(drawTrain);
 }
 
+function makeLink(url: string, text: string) {
+    return `<a href="${url}">${text}</a>`;
+}
+
 function createWorksPopup(works: WorksData) {
     removePopup();
 
     selected = works.id;
+
+    const urls = works.urls.map((url) => makeLink(url.url, url.label));
+
+    let urlText = '';
+    if (urls.length !== 0) {
+        urlText = `Info: ${urls.join(', ')}`;
+    }
 
     currentPopup = new Popup({
         'offset': new Point(0, -3)
@@ -328,7 +345,8 @@ function createWorksPopup(works: WorksData) {
         ])
         .setContent(`<strong>${works.name}</strong><br />` +
                     `Ending ${works.endDate} ${works.endTime}<br />` +
-                    `${works.message}`)
+                    `${works.message}<br />` +
+                    `${urlText}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
 }
