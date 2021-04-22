@@ -100,6 +100,20 @@ let statsControl: Control;
 let selected: string;
 let currentPopup: Popup;
 
+function formatDelay(delay: number): string {
+    const delayMinutes = Math.floor(delay / 60);
+    const delaySeconds = Math.round(delay % 60);
+
+    let delayFormatted = `${delayMinutes}:`;
+    if (delaySeconds < 10) {
+        delayFormatted += `0${delaySeconds}`;
+    } else {
+        delayFormatted += `${delaySeconds}`;
+    }
+
+    return delayFormatted;
+}
+
 function addStats(trains: APITrainData): HTMLElement {
     let green = 0;
     let maxDelay = 0;
@@ -140,8 +154,8 @@ function addStats(trains: APITrainData): HTMLElement {
     const div = DomUtil.create('div', 'info legend');
     div.innerHTML =
       '<strong>Stats</strong><br>' +
-      `Average delay: ${Math.round(avgDelay / 0.6) / 100} minutes <br>` +
-      `Maximum delay: ${maxDelay / 60} minutes <br>` +
+      `Average delay: ${formatDelay(avgDelay)}<br>` +
+      `Maximum delay: ${formatDelay(maxDelay)}<br>` +
       `'Green' trains: ${green} <br>` +
       `'Orange' trains: ${orange} <br>` +
       `'Red' trains: ${red} <br>` +
@@ -229,7 +243,7 @@ function createTrainPopup(train: TrainData) {
             train.estimatedLon
         ])
         .setContent(`<strong>${train.name}</strong>: ` +
-                `+${getDelay(train) / 60} min<br>Next stop: ${name}`)
+                `+${formatDelay(getDelay(train))} min<br>Next stop: ${name}`)
         .openOn(map);
     currentPopup.on('remove', removePopup);
 }
