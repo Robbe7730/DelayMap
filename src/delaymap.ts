@@ -446,14 +446,14 @@ function addLegend(): HTMLElement {
 }
 
 function getTrains() {
-    fetch(`${config.API_URL}/trains`)
+    fetch(`${config.API_URL}/trains?language=${i18next.language}`)
         .then((res) => res.json())
         .then(drawTrainData)
         .catch(handleError);
 }
 
 function getWorks() {
-    fetch(`${config.API_URL}/works`)
+    fetch(`${config.API_URL}/works?language=${i18next.language}`)
         .then((res) => res.json())
         .then(drawWorksData)
         .catch(handleError);
