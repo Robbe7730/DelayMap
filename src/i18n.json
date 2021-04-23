@@ -1,0 +1,51 @@
+{
+    "en": {
+        "translation": {
+            "legend": {
+                "title": "Legend",
+                "green": "Green: No delay",
+                "orange": "Orange: 6 minutes or less",
+                "red": "Red: More than 6 minutes"
+            },
+            "error": {
+                "pre": "Could not load data, if this issue persists please",
+                "file-issue": "file an issue on GitHub",
+                "message": "Error message"
+            },
+            "stats": {
+                "title": "Stats",
+                "average-delay": "Average delay",
+                "maximum-delay": "Maximum delay",
+                "green-trains": "'Green' trains",
+                "orange-trains": "'Orange' trains",
+                "red-trains": "'Red' trains",
+                "total-trains": "Total trains"
+            }
+        }
+    },
+    "nl": {
+        "translation": {
+            "legend": {
+                "title": "Legende",
+                "green": "Groen: Geen vertraging",
+                "orange": "Oranje: 6 minuten of minder",
+                "red": "Rood: meer dan 6 minuten"
+            },
+            "error": {
+                "pre": "Kon de data niet laden, gelieve als dit probleem aanhoudt",
+                "file-issue": "een issue te openen op GitHub",
+                "message": "Foutmelding"
+            },
+            "stats": {
+                "title": "Statistieken",
+                "average-delay": "Gemiddelde vertraging",
+                "maximum-delay": "Maximale vertraging",
+                "green-trains": "'Groene' treinen",
+                "orange-trains": "'Oranje' treinen",
+                "red-trains": "'Rode' treinen",
+                "total-trains": "Totaal aantal treinen"
+            }
+        }
+    }
+}
+
