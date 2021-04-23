@@ -4,6 +4,7 @@
  */
 
 import * as config from './config.json';
+import * as i18n from './i18n.json';
 import {
     Control,
     DivIcon,
@@ -21,6 +22,7 @@ import {
 } from 'leaflet';
 // eslint-disable-next-line sort-imports
 import 'leaflet.markercluster';
+import i18next from 'i18next';
 
 declare global {
     interface Window {
@@ -106,6 +108,7 @@ let statsControl: Control;
 let selected: string;
 let currentPopup: Popup;
 let selectedClicked = false;
+let legend: Control;
 
 function formatDelay(delay: number): string {
     const delayMinutes = Math.floor(delay / 60);
@@ -160,13 +163,13 @@ function addStats(trains: APITrainData): HTMLElement {
     // Create the stats div
     const div = DomUtil.create('div', 'info legend');
     div.innerHTML =
-      '<strong>Stats</strong><br>' +
-      `Average delay: ${formatDelay(avgDelay)}<br>` +
-      `Maximum delay: ${formatDelay(maxDelay)}<br>` +
-      `'Green' trains: ${green} <br>` +
-      `'Orange' trains: ${orange} <br>` +
-      `'Red' trains: ${red} <br>` +
-      `Total trains: ${green + red + orange} <br>`;
+      `<strong>${i18next.t('stats.title')}</strong><br>` +
+      `${i18next.t('stats.average-delay')}: ${formatDelay(avgDelay)}<br>` +
+      `${i18next.t('stats.maximum-delay')}: ${formatDelay(maxDelay)}<br>` +
+      `${i18next.t('stats.green-trains')}: ${green} <br>` +
+      `${i18next.t('stats.orange-trains')}: ${orange} <br>` +
+      `${i18next.t('stats.red-trains')}: ${red} <br>` +
+      `${i18next.t('stats.total-trains')}: ${green + red + orange} <br>`;
 
     return div;
 }
@@ -405,10 +408,10 @@ function addError(error: Error): HTMLElement {
         'div',
         'info error'
     );
-    div.innerHTML = '<b> Could not load data, if this issue persists please ' +
+    div.innerHTML = `<b> ${i18next.t('error.pre')} ` +
                     '<a href="https://github.com/Robbe7730/DelayMap/issues">' +
-                    'file an issue on GitHub</a></b><br>' +
-                    `Error message: ${error.message}`;
+                    `${i18next.t('error.file-issue')}</a></b><br>` +
+                    `${i18next.t('error.message')}: ${error.message}`;
     div.style.backgroundColor = '#cc0000';
     return div;
 }
@@ -434,23 +437,23 @@ function addLegend(): HTMLElement {
         'info legend'
     );
     div.innerHTML =
-        '<strong>Legend</strong><br>' +
-        'Green: No delay <br>' +
-        'Orange: 6 minutes or less <br>' +
-        'Red: More than 6 minutes <br>';
+        `<strong>${i18next.t('legend.title')}</strong><br>` +
+        `${i18next.t('legend.green')} <br>` +
+        `${i18next.t('legend.orange')} <br>` +
+        `${i18next.t('legend.red')}`;
 
     return div;
 }
 
 function getTrains() {
-    fetch(`${config.API_URL}/trains`)
+    fetch(`${config.API_URL}/trains?language=${i18next.language}`)
         .then((res) => res.json())
         .then(drawTrainData)
         .catch(handleError);
 }
 
 function getWorks() {
-    fetch(`${config.API_URL}/works`)
+    fetch(`${config.API_URL}/works?language=${i18next.language}`)
         .then((res) => res.json())
         .then(drawWorksData)
         .catch(handleError);
@@ -541,12 +544,51 @@ function addLayers() {
     ).addTo(map);
 }
 
+function createLegend() {
+    legend = new Control({'position': 'topright'});
+    legend.onAdd = addLegend;
+    legend.addTo(map);
+}
+
+function setLanguage(lang: string) {
+    i18next.changeLanguage(lang);
+
+    legend.remove();
+    createLegend();
+}
+
+function addLanguageSelect() {
+    const select = document.createElement('select');
+
+    const nlOption = document.createElement('option');
+    nlOption.text = 'Nederlands';
+    nlOption.value = 'nl';
+
+    const enOption = document.createElement('option');
+    enOption.text = 'English';
+    enOption.value = 'en';
+
+    select.add(nlOption);
+    select.add(enOption);
+
+    select.oninput = () => {
+        const newLang = select.options[select.selectedIndex]?.value;
+
+        if (newLang) {
+            setLanguage(newLang);
+        }
+    };
+
+    return select;
+}
+
+
 function update() {
     getTrains();
     getWorks();
 }
 
-function onLoad() {
+function start() {
     map = new Map('leafletMap').setView(
         [
             DEFAULT_CENTER_X,
@@ -557,10 +599,13 @@ function onLoad() {
 
     addLayers();
 
+    // Add a language selector
+    const languageSelect = new Control({'position': 'bottomright'});
+    languageSelect.onAdd = addLanguageSelect;
+    languageSelect.addTo(map);
+
     // Add the legend
-    const legend = new Control({'position': 'topright'});
-    legend.onAdd = addLegend;
-    legend.addTo(map);
+    createLegend();
 
     // Add an (empty) box for the stats
     statsControl = new Control({'position': 'bottomleft'});
@@ -580,6 +625,22 @@ function onLoad() {
         update,
         5000
     );
+}
+
+function onLoad() {
+    i18next.init({
+        'lng': 'nl',
+        'debug': false,
+        'supportedLngs': [
+            'en',
+            'nl',
+            'dev'
+            // TODO: fr and de
+        ],
+        'resources': i18n
+    }).then(() => {
+        start();
+    });
 }
 
 window.onLoad = onLoad;
