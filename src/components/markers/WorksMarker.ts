@@ -4,9 +4,9 @@ import {
     Point,
     Popup
 } from 'leaflet';
-import {DelayMap} from './DelayMap';
+import {DelayMap} from '../DelayMap';
 import {DelayMapMarker} from './DelayMapMarker';
-import {WorksData} from '../API';
+import {WorksData} from '../../API';
 import i18next from 'i18next';
 
 export class WorksMarker extends DelayMapMarker<WorksData> {

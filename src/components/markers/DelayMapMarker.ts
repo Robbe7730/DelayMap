@@ -1,7 +1,7 @@
 import {DivIcon, LatLngExpression, Marker, Popup} from 'leaflet';
 
-import {DelayMap} from './DelayMap';
-import {Translatable} from './Translatable';
+import {DelayMap} from '../DelayMap';
+import {Translatable} from '../Translatable';
 
 export interface LatLonAble {
     getLatLon: () => LatLngExpression;
@@ -55,9 +55,7 @@ export abstract class DelayMapMarker<D> extends Marker implements Translatable {
 
         this.on(
             'click',
-            () => {
-                this.showPopup();
-            }
+            () => this.onClick()
         );
     }
 
@@ -72,6 +70,10 @@ export abstract class DelayMapMarker<D> extends Marker implements Translatable {
 
     showPopup(): void {
         this.popup.openOn(this.delaymap);
+    }
+
+    onClick(): void {
+        this.showPopup();
     }
 
     abstract createPopup(): Popup;

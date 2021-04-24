@@ -1,23 +1,25 @@
-import {FullStopTime, StopTime, TrainData} from '../API';
 import {
     LatLng,
     LatLngExpression,
     Point,
-    Polyline,
     Popup
 } from 'leaflet';
-import {formatDelay, getColor, getDelay} from '../Util';
-
-import {DelayMap} from './DelayMap';
+import {StopTime, TrainData} from '../../API';
+import {formatDelay, getColor, getDelay} from '../../Util';
+import {DelayMap} from '../DelayMap';
 import {DelayMapMarker} from './DelayMapMarker';
 import i18next from 'i18next';
 
 export class TrainMarker extends DelayMapMarker<TrainData> {
+    extraOnClick: (stops: StopTime[]) => void;
+
     constructor(
         train: TrainData,
-        delaymap: DelayMap
+        delaymap: DelayMap,
+        drawStops: (stops: StopTime[]) => void
     ) {
         super(train, delaymap, getColor(train), 'train');
+        this.extraOnClick = drawStops.bind(this);
     }
 
     createPopup(): Popup {
@@ -33,24 +35,17 @@ export class TrainMarker extends DelayMapMarker<TrainData> {
                 `${i18next.t('trainMarker.nextStop')}: ${name}`);
     }
 
-    drawStops(): void {
-        this.delaymap.clearRoutes();
-        new Polyline(this.data.stops
-            .filter((stop: StopTime):stop is FullStopTime =>
-                typeof stop.lat !== 'undefined' &&
-                typeof stop.lon !== 'undefined')
-            .map((stop: FullStopTime) => [
-                stop.lat,
-                stop.lon
-            ]))
-            .addTo(this.delaymap.routesLayer);
-    }
 
     getLatLon(data: TrainData): LatLngExpression {
         return new LatLng(
             data.estimatedLat,
             data.estimatedLon
         );
+    }
+
+    onClick(): void {
+        super.onClick();
+        this.extraOnClick(this.data.stops);
     }
 }
 

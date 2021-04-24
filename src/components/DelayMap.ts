@@ -15,20 +15,20 @@ import {
     TileLayer
 } from 'leaflet';
 
-import {LanguageSelector} from './LanguageSelector';
-import {Legend} from './Legend';
-import {Stats} from './Stats';
-import {TrainMarker} from './TrainMarker';
-import {TrainMarkerLayer} from './TrainMarkerLayer';
-import {WorksMarker} from './WorksMarker';
+import {LanguageSelector} from './controls/LanguageSelector';
+import {Legend} from './controls/Legend';
+import {RouteLayer} from './layers/RouteLayer';
+import {Stats} from './controls/Stats';
+import {TrainMarker} from './markers/TrainMarker';
+import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
+import {WorksMarker} from './markers/WorksMarker';
 import i18next from 'i18next';
 
 export class DelayMap extends Map {
     openrailwaymap: TileLayer;
 
     trainMarkerLayer: TrainMarkerLayer;
-
-    routesLayer: LayerGroup;
+    routeLayer: RouteLayer;
     worksLayer: LayerGroup;
 
     legend: Legend;
@@ -81,8 +81,8 @@ export class DelayMap extends Map {
         this.addLayer(this.trainMarkerLayer);
 
         // Add layer for routes
-        this.routesLayer = new LayerGroup();
-        this.addLayer(this.routesLayer);
+        this.routeLayer = new RouteLayer(this);
+        this.addLayer(this.routeLayer);
 
         // Add layer for works
         this.worksLayer = new LayerGroup();
@@ -95,7 +95,7 @@ export class DelayMap extends Map {
             {},
             {
                 'OpenRailwayMap': this.openrailwaymap,
-                'Routes': this.routesLayer,
+                'Routes': this.routeLayer,
                 'Works': this.worksLayer
             },
             {
@@ -169,14 +169,14 @@ export class DelayMap extends Map {
         this.stats.setData(trains);
 
         trains.forEach((train) => {
-            new TrainMarker(train, this).addTo(this.trainMarkerLayer);
+            new TrainMarker(train, this, (stops) =>
+                this.routeLayer.drawStops(stops))
+                .addTo(this.trainMarkerLayer);
         });
     }
 
     clearRoutes(): void {
-        this.routesLayer.remove();
-        this.routesLayer = new LayerGroup();
-        this.addLayer(this.routesLayer);
+        this.routeLayer.clearRoutes();
     }
 
     clearTrainMarkerLayer(): void {

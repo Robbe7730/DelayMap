@@ -1,8 +1,8 @@
 import {Control, DomUtil} from 'leaflet';
-import {formatDelay, getDelay} from '../Util';
+import {formatDelay, getDelay} from '../../Util';
 
-import {APITrainData} from '../API';
-import {Translatable} from './Translatable';
+import {APITrainData} from '../../API';
+import {Translatable} from '../Translatable';
 import i18next from 'i18next';
 
 enum StatsDataType {
