@@ -4,7 +4,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: 'development',
-    entry: "./src/delaymap.ts",
+    entry: "./src/main.ts",
     output: {
         filename: "delaymap.js",
     },

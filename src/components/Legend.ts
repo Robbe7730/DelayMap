@@ -1,5 +1,5 @@
 import {Control, DomUtil} from 'leaflet';
-import {Translatable} from './translatable';
+import {Translatable} from './Translatable';
 import i18next from 'i18next';
 
 export class Legend extends Control implements Translatable {

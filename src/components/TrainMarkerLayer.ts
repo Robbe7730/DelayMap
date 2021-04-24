@@ -1,6 +1,6 @@
 import {DivIcon, Marker, MarkerClusterGroup, Point} from 'leaflet';
-import {TrainMarker} from './trainmarker';
-import {getDelay} from '../util';
+import {TrainMarker} from './TrainMarker';
+import {getDelay} from '../Util';
 
 export class TrainMarkerLayer extends MarkerClusterGroup {
     constructor() {

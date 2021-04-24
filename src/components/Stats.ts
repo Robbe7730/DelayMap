@@ -1,13 +1,14 @@
-import {APITrainData} from '../api';
 import {Control, DomUtil} from 'leaflet';
-import {Translatable} from './translatable';
+import {formatDelay, getDelay} from '../Util';
+
+import {APITrainData} from '../API';
+import {Translatable} from './Translatable';
 import i18next from 'i18next';
-import {formatDelay, getDelay} from '../util';
 
 enum DataType {
     StatsData,
     ErrorData,
-    LoadingData,
+    LoadingData
 }
 
 interface StatsData {
@@ -36,13 +37,13 @@ export class Stats extends Control implements Translatable {
         super({'position': 'bottomleft'});
 
         this.data = {
-            type: DataType.LoadingData,
+            'type': DataType.LoadingData
         };
 
         this.div = this.updateContent();
     }
 
-    setData(data: APITrainData) {
+    setData(data: APITrainData): void {
         let numGreen = 0;
         let numOrange = 0;
         let numRed = 0;
@@ -72,23 +73,23 @@ export class Stats extends Control implements Translatable {
         });
 
         // Calculate the average delay
-        let avgDelay = totalDelay / data.length;
+        const avgDelay = totalDelay / data.length;
 
         this.data = {
-            type: DataType.StatsData,
+            'type': DataType.StatsData,
             numGreen,
             numOrange,
             numRed,
             avgDelay,
-            maxDelay,
-        }
+            maxDelay
+        };
 
         this.updateContent();
     }
 
-    setError(error: Error) {
+    setError(error: Error): void {
         this.data = {
-            type: DataType.ErrorData,
+            'type': DataType.ErrorData,
             error
         };
 
@@ -99,34 +100,47 @@ export class Stats extends Control implements Translatable {
         this.div ??= DomUtil.create('div', 'info legend');
 
         switch (this.data.type) {
-            case DataType.StatsData: {
-                this.div.classList.remove('error');
-                this.div.innerHTML =
+        case DataType.StatsData: {
+            this.div.classList.remove('error');
+            this.div.innerHTML =
                   `<strong>${i18next.t('stats.title')}</strong><br>` +
-                  `${i18next.t('stats.average-delay')}: ${formatDelay(this.data.avgDelay)}<br>` +
-                  `${i18next.t('stats.maximum-delay')}: ${formatDelay(this.data.maxDelay)}<br>` +
-                  `${i18next.t('stats.green-trains')}: ${this.data.numGreen} <br>` +
-                  `${i18next.t('stats.orange-trains')}: ${this.data.numOrange} <br>` +
+                  `${i18next.t('stats.average-delay')}: ` +
+                  `${formatDelay(this.data.avgDelay)}<br>` +
+                  `${i18next.t('stats.maximum-delay')}: ` +
+                  `${formatDelay(this.data.maxDelay)}<br>` +
+                  `${i18next.t('stats.green-trains')}: ` +
+                  `${this.data.numGreen} <br>` +
+                  `${i18next.t('stats.orange-trains')}: ` +
+                  `${this.data.numOrange} <br>` +
                   `${i18next.t('stats.red-trains')}: ${this.data.numRed} <br>` +
                   `${i18next.t('stats.total-trains')}: ${
-                        this.data.numRed + this.data.numOrange + this.data.numGreen
-                    } <br>`;
-                break;
-            }
-            case DataType.LoadingData: {
-                this.div.classList.remove('error');
-                // TODO: why does this overflow?
-                this.div.innerHTML = `<i>${i18next.t('stats.loading')}</i><br>`
-                break;
-            }
-            case DataType.ErrorData: {
-                this.div.classList.add('error');
-                this.div.innerHTML = `<b> ${i18next.t('error.pre')} ` +
-                                '<a href="https://github.com/Robbe7730/DelayMap/issues">' +
-                                `${i18next.t('error.file-issue')}</a></b><br>` +
-                                `${i18next.t('error.message')}: ${this.data.error.message}`;
-                break;
-            }
+                      this.data.numRed +
+                      this.data.numOrange +
+                      this.data.numGreen
+                  } <br>`;
+            break;
+        }
+        case DataType.LoadingData: {
+            this.div.classList.remove('error');
+            // TODO: why does this overflow?
+            this.div.innerHTML = `<i>${i18next.t('stats.loading')}</i><br>`;
+            break;
+        }
+        case DataType.ErrorData: {
+            this.div.classList.add('error');
+            this.div.innerHTML = `<b> ${i18next.t('error.pre')} ` +
+                    '<a href="https://github.com/Robbe7730/DelayMap/issues">' +
+                    `${i18next.t('error.file-issue')}</a></b><br>` +
+                    `${i18next.t('error.message')}: ${this.data.error.message}`;
+            break;
+        }
+        default: {
+            this.data = {
+                'type': DataType.ErrorData,
+                'error': new Error('Invalid data type')
+            };
+            this.updateContent();
+        }
         }
 
 
@@ -140,5 +154,4 @@ export class Stats extends Control implements Translatable {
     onLanguageChanged(): void {
         this.updateContent();
     }
-
 }

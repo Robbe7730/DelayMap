@@ -1,4 +1,4 @@
-import {APITrainData, APIWorksData} from '../api';
+import {APITrainData, APIWorksData} from '../API';
 
 import {
     API_URL,
@@ -15,11 +15,11 @@ import {
     TileLayer
 } from 'leaflet';
 
-import {Legend} from './legend';
-import {Stats} from './stats';
-import {TrainMarker} from './trainmarker';
-import {TrainMarkerLayer} from './trainmarkerlayer';
-import {WorksMarker} from './worksmarker';
+import {Legend} from './Legend';
+import {Stats} from './Stats';
+import {TrainMarker} from './TrainMarker';
+import {TrainMarkerLayer} from './TrainMarkerLayer';
+import {WorksMarker} from './WorksMarker';
 import i18next from 'i18next';
 
 export class DelayMap extends Map {
@@ -169,6 +169,7 @@ export class DelayMap extends Map {
         this.stats.setError(error);
         this.clearRoutes();
         this.clearTrainMarkerLayer();
+        this.clearWorksLayer();
     }
 
     getTrains(): void {
@@ -179,9 +180,7 @@ export class DelayMap extends Map {
     }
 
     drawWorksData(works: APIWorksData): void {
-        this.worksLayer.remove();
-        this.worksLayer = new LayerGroup();
-        this.addLayer(this.worksLayer);
+        this.clearWorksLayer();
 
         works.forEach((work) => {
             new WorksMarker(work, this).addTo(this.worksLayer);
@@ -207,5 +206,11 @@ export class DelayMap extends Map {
         this.trainMarkerLayer.remove();
         this.trainMarkerLayer = new TrainMarkerLayer();
         this.addLayer(this.trainMarkerLayer);
+    }
+
+    clearWorksLayer(): void {
+        this.worksLayer.remove();
+        this.worksLayer = new LayerGroup();
+        this.addLayer(this.worksLayer);
     }
 }

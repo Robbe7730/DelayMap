@@ -1,4 +1,4 @@
-import {TrainData} from './api';
+import {TrainData} from './API';
 
 export function getDelay(train: TrainData): number {
     const currStation = train.stops[train.stopIndex];

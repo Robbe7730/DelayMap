@@ -11,7 +11,7 @@ import i18next from 'i18next';
 import 'leaflet';
 // eslint-disable-next-line sort-imports
 import 'leaflet.markercluster';
-import {DelayMap} from './components/delaymap';
+import {DelayMap} from './components/DelayMap';
 
 declare global {
     interface Window {

@@ -5,9 +5,9 @@ import {
     Point,
     Popup
 } from 'leaflet';
-import {DelayMap} from './delaymap';
-import {Translatable} from './translatable';
-import {WorksData} from '../api';
+import {DelayMap} from './DelayMap';
+import {Translatable} from './Translatable';
+import {WorksData} from '../API';
 import i18next from 'i18next';
 
 // TODO: combine this with TrainMarker

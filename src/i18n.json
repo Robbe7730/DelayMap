@@ -24,6 +24,9 @@
             },
             "works": {
                 "ending": "Ending at"
+            },
+            "trainMarker": {
+                "nextStop": "Next stop"
             }
         }
     },
@@ -52,6 +55,9 @@
             },
             "works": {
                 "ending": "Eindigen op"
+            },
+            "trainMarker": {
+                "nextStop": "Volgende halte"
             }
         }
     }
