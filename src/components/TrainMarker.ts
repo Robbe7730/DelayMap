@@ -1,77 +1,23 @@
+import {FullStopTime, StopTime, TrainData} from '../API';
 import {
-    DivIcon,
-    Marker,
-    MarkerOptions,
+    LatLng,
+    LatLngExpression,
     Point,
     Polyline,
     Popup
 } from 'leaflet';
-import {FullStopTime, StopTime, TrainData} from '../API';
 import {formatDelay, getColor, getDelay} from '../Util';
+
 import {DelayMap} from './DelayMap';
-import {Translatable} from './Translatable';
+import {DelayMapMarker} from './DelayMapMarker';
 import i18next from 'i18next';
 
-// TODO: combine this with WorksMarker
-export class TrainMarker extends Marker implements Translatable {
-    data: TrainData;
-    trainIcon: DivIcon;
-    popup: Popup;
-    delaymap: DelayMap;
-
+export class TrainMarker extends DelayMapMarker<TrainData> {
     constructor(
         train: TrainData,
-        delaymap: DelayMap,
-        options?: MarkerOptions | undefined
+        delaymap: DelayMap
     ) {
-        super([
-            train.estimatedLat,
-            train.estimatedLon
-        ], options);
-
-        this.delaymap = delaymap;
-
-        const color = getColor(train);
-
-        this.trainIcon = new DivIcon({
-            'className': 'myDivIcon',
-            'html': `<i class='fa fa-train' style='color: ${color}'></i>`,
-            'iconAnchor': [
-                5,
-                10
-            ],
-            'iconSize': [
-                20,
-                20
-            ]
-        });
-
-        this.setIcon(this.trainIcon);
-
-        this.data = train;
-
-        this.on(
-            'mouseover',
-            () => this.showPopup()
-        );
-        this.on(
-            'mouseout',
-            () => this.hidePopup()
-        );
-
-        this.on(
-            'click',
-            () => {
-                this.drawStops();
-                this.showPopup();
-            }
-        );
-
-        this.popup = this.createPopup();
-    }
-
-    onLanguageChanged(): void {
-        this.popup = this.createPopup();
+        super(train, delaymap, getColor(train), 'train');
     }
 
     createPopup(): Popup {
@@ -81,10 +27,7 @@ export class TrainMarker extends Marker implements Translatable {
         return new Popup({
             'offset': new Point(0, -3)
         })
-            .setLatLng([
-                this.data.estimatedLat,
-                this.data.estimatedLon
-            ])
+            .setLatLng(this.getLatLon(this.data))
             .setContent(`<strong>${this.data.name}</strong>: ` +
                 `+${formatDelay(getDelay(this.data))} min<br>` +
                 `${i18next.t('trainMarker.nextStop')}: ${name}`);
@@ -103,12 +46,11 @@ export class TrainMarker extends Marker implements Translatable {
             .addTo(this.delaymap.routesLayer);
     }
 
-    hidePopup(): void {
-        this.delaymap.closePopup();
-    }
-
-    showPopup(): void {
-        this.popup.openOn(this.delaymap);
+    getLatLon(data: TrainData): LatLngExpression {
+        return new LatLng(
+            data.estimatedLat,
+            data.estimatedLon
+        );
     }
 }
 
