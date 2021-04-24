@@ -5,14 +5,14 @@ import {APITrainData} from '../API';
 import {Translatable} from './Translatable';
 import i18next from 'i18next';
 
-enum DataType {
+enum StatsDataType {
     StatsData,
     ErrorData,
     LoadingData
 }
 
 interface StatsData {
-    type: DataType.StatsData;
+    type: StatsDataType.StatsData;
     numGreen: number;
     numOrange: number;
     numRed: number;
@@ -21,12 +21,12 @@ interface StatsData {
 }
 
 interface ErrorData {
-    type: DataType.ErrorData;
+    type: StatsDataType.ErrorData;
     error: Error;
 }
 
 interface LoadingData {
-    type: DataType.LoadingData;
+    type: StatsDataType.LoadingData;
 }
 
 export class Stats extends Control implements Translatable {
@@ -37,7 +37,7 @@ export class Stats extends Control implements Translatable {
         super({'position': 'bottomleft'});
 
         this.data = {
-            'type': DataType.LoadingData
+            'type': StatsDataType.LoadingData
         };
 
         this.div = this.updateContent();
@@ -76,7 +76,7 @@ export class Stats extends Control implements Translatable {
         const avgDelay = totalDelay / data.length;
 
         this.data = {
-            'type': DataType.StatsData,
+            'type': StatsDataType.StatsData,
             numGreen,
             numOrange,
             numRed,
@@ -89,7 +89,7 @@ export class Stats extends Control implements Translatable {
 
     setError(error: Error): void {
         this.data = {
-            'type': DataType.ErrorData,
+            'type': StatsDataType.ErrorData,
             error
         };
 
@@ -97,10 +97,10 @@ export class Stats extends Control implements Translatable {
     }
 
     updateContent(): HTMLElement {
-        this.div ??= DomUtil.create('div', 'info legend');
+        this.div = this.div || DomUtil.create('div', 'info legend');
 
         switch (this.data.type) {
-        case DataType.StatsData: {
+        case StatsDataType.StatsData:
             this.div.classList.remove('error');
             this.div.innerHTML =
                   `<strong>${i18next.t('stats.title')}</strong><br>` +
@@ -119,28 +119,24 @@ export class Stats extends Control implements Translatable {
                       this.data.numGreen
                   } <br>`;
             break;
-        }
-        case DataType.LoadingData: {
+        case StatsDataType.LoadingData:
             this.div.classList.remove('error');
             // TODO: why does this overflow?
             this.div.innerHTML = `<i>${i18next.t('stats.loading')}</i><br>`;
             break;
-        }
-        case DataType.ErrorData: {
+        case StatsDataType.ErrorData:
             this.div.classList.add('error');
             this.div.innerHTML = `<b> ${i18next.t('error.pre')} ` +
                     '<a href="https://github.com/Robbe7730/DelayMap/issues">' +
                     `${i18next.t('error.file-issue')}</a></b><br>` +
                     `${i18next.t('error.message')}: ${this.data.error.message}`;
             break;
-        }
-        default: {
+        default:
             this.data = {
-                'type': DataType.ErrorData,
+                'type': StatsDataType.ErrorData,
                 'error': new Error('Invalid data type')
             };
             this.updateContent();
-        }
         }
 
 

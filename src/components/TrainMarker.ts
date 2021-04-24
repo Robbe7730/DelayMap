@@ -1,4 +1,3 @@
-import i18next from 'i18next';
 import {
     DivIcon,
     Marker,
@@ -11,6 +10,7 @@ import {FullStopTime, StopTime, TrainData} from '../API';
 import {formatDelay, getColor, getDelay} from '../Util';
 import {DelayMap} from './DelayMap';
 import {Translatable} from './Translatable';
+import i18next from 'i18next';
 
 // TODO: combine this with WorksMarker
 export class TrainMarker extends Marker implements Translatable {

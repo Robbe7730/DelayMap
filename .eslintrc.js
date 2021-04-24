@@ -27,7 +27,7 @@ module.exports = {
         'brace-style': 'error',
         'camelcase': 'error',
         'capitalized-comments': 'error',
-        'class-methods-use-this': 'error',
+        'class-methods-use-this': 'off',
         'comma-dangle': 'error',
         'comma-spacing': 'error',
         'comma-style': 'error',
@@ -145,7 +145,7 @@ module.exports = {
         'no-script-url': 'error',
         'no-self-compare': 'error',
         'no-sequences': 'error',
-        'no-shadow': 'error',
+        'no-shadow': 'off',
         'no-tabs': 'error',
         'no-template-curly-in-string': 'error',
         'no-ternary': 'off',
@@ -234,6 +234,7 @@ module.exports = {
         'wrap-iife': 'error',
         'wrap-regex': 'error',
         'yield-star-spacing': 'error',
-        'yoda': 'error'
+        'yoda': 'error',
+        '@typescript-eslint/no-shadow': 'error'
     }
 };

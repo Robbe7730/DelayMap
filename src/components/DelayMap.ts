@@ -15,6 +15,7 @@ import {
     TileLayer
 } from 'leaflet';
 
+import {LanguageSelector} from './LanguageSelector';
 import {Legend} from './Legend';
 import {Stats} from './Stats';
 import {TrainMarker} from './TrainMarker';
@@ -104,8 +105,9 @@ export class DelayMap extends Map {
         ));
 
         // Add a language selector
-        const languageSelect = new Control({'position': 'bottomright'});
-        languageSelect.onAdd = () => this.addLanguageSelect();
+        const languageSelect = new LanguageSelector((lang) =>
+            this.setLanguage(lang));
+
         this.addControl(languageSelect);
 
         // Add the legend
@@ -115,31 +117,6 @@ export class DelayMap extends Map {
         // Add the stats
         this.stats = new Stats();
         this.addControl(this.stats);
-    }
-
-    addLanguageSelect(): HTMLSelectElement {
-        const select = document.createElement('select');
-
-        const nlOption = document.createElement('option');
-        nlOption.text = 'Nederlands';
-        nlOption.value = 'nl';
-
-        const enOption = document.createElement('option');
-        enOption.text = 'English';
-        enOption.value = 'en';
-
-        select.add(nlOption);
-        select.add(enOption);
-
-        select.oninput = () => {
-            const newLang = select.options[select.selectedIndex]?.value;
-
-            if (newLang) {
-                this.setLanguage(newLang);
-            }
-        };
-
-        return select;
     }
 
     setLanguage(lang: string): void {
