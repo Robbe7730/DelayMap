@@ -20,9 +20,10 @@ html, body {
     opacity: 0.7;
 }
 
-.error {
+div .error {
     line-height: 18px;
     color: #ffffff;
+    background: #cc0000;
 }
 
 .error a {

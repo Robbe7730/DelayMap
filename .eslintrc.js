@@ -70,7 +70,7 @@ module.exports = {
         'line-comment-position': 'error',
         'linebreak-style': 'error',
         'lines-around-comment': 'error',
-        'lines-between-class-members': 'error',
+        'lines-between-class-members': 'off',
         'max-classes-per-file': 'error',
         'max-depth': 'error',
         'max-len': 'error',
