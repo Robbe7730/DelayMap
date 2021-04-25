@@ -32,6 +32,7 @@ export class DelayMap extends Map {
 
     legend: Legend;
     stats: Stats;
+    languageSelect: LanguageSelector;
 
     constructor() {
         super('leafletMap');
@@ -104,10 +105,9 @@ export class DelayMap extends Map {
         ));
 
         // Add a language selector
-        const languageSelect = new LanguageSelector((lang) =>
+        this.languageSelect = new LanguageSelector((lang) =>
             this.setLanguage(lang));
-
-        this.addControl(languageSelect);
+        this.addControl(this.languageSelect);
 
         // Add the legend
         this.legend = new Legend();
@@ -129,6 +129,7 @@ export class DelayMap extends Map {
 
         this.legend.onLanguageChanged();
         this.stats.onLanguageChanged();
+        this.languageSelect.onLanguageChanged();
 
         this.update();
     }
