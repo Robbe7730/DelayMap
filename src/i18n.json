@@ -19,7 +19,19 @@
                 "green-trains": "'Green' trains",
                 "orange-trains": "'Orange' trains",
                 "red-trains": "'Red' trains",
-                "total-trains": "Total trains"
+                "total-trains": "Total trains",
+                "loading": "Loading..."
+            },
+            "works": {
+                "ending": "Ending at"
+            },
+            "trainMarker": {
+                "nextStop": "Next stop"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Routes",
+                "works": "Works"
             }
         }
     },
@@ -43,8 +55,21 @@
                 "green-trains": "'Groene' treinen",
                 "orange-trains": "'Oranje' treinen",
                 "red-trains": "'Rode' treinen",
-                "total-trains": "Totaal aantal treinen"
+                "total-trains": "Totaal aantal treinen",
+                "loading": "Laden..."
+            },
+            "works": {
+                "ending": "Eindigen op"
+            },
+            "trainMarker": {
+                "nextStop": "Volgende halte"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Routes",
+                "works": "Werken"
             }
+
         }
     }
 }

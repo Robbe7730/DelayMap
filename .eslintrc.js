@@ -27,7 +27,7 @@ module.exports = {
         'brace-style': 'error',
         'camelcase': 'error',
         'capitalized-comments': 'error',
-        'class-methods-use-this': 'error',
+        'class-methods-use-this': 'off',
         'comma-dangle': 'error',
         'comma-spacing': 'error',
         'comma-style': 'error',
@@ -70,14 +70,14 @@ module.exports = {
         'line-comment-position': 'error',
         'linebreak-style': 'error',
         'lines-around-comment': 'error',
-        'lines-between-class-members': 'error',
+        'lines-between-class-members': 'off',
         'max-classes-per-file': 'error',
         'max-depth': 'error',
         'max-len': 'error',
         'max-lines': 'off',
         'max-lines-per-function': 'off',
         'max-nested-callbacks': 'error',
-        'max-params': 'error',
+        'max-params': 'off',
         'max-statements': 'off',
         'max-statements-per-line': 'error',
         'multiline-comment-style': 'error',
@@ -145,7 +145,7 @@ module.exports = {
         'no-script-url': 'error',
         'no-self-compare': 'error',
         'no-sequences': 'error',
-        'no-shadow': 'error',
+        'no-shadow': 'off',
         'no-tabs': 'error',
         'no-template-curly-in-string': 'error',
         'no-ternary': 'off',
@@ -234,6 +234,7 @@ module.exports = {
         'wrap-iife': 'error',
         'wrap-regex': 'error',
         'yield-star-spacing': 'error',
-        'yoda': 'error'
+        'yoda': 'error',
+        '@typescript-eslint/no-shadow': 'error'
     }
 };
