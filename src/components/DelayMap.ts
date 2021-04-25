@@ -116,6 +116,12 @@ export class DelayMap extends Map {
         // Add the stats
         this.stats = new Stats();
         this.addControl(this.stats);
+
+        // Clear the routes when just the map is clicked
+        this.on(
+            'click',
+            () => this.routeLayer.clear()
+        );
     }
 
     setLanguage(lang: string): void {
