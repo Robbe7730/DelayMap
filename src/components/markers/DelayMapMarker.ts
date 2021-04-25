@@ -11,6 +11,7 @@ export abstract class DelayMapMarker<D> extends Marker implements Translatable {
     data: D;
     delaymap: DelayMap;
     popup: Popup;
+    clicked: boolean;
 
     constructor(
         data: D,
@@ -42,15 +43,16 @@ export abstract class DelayMapMarker<D> extends Marker implements Translatable {
             ]
         }));
 
+        this.clicked = false;
         this.popup = this.createPopup();
 
         this.on(
             'mouseover',
-            () => this.showPopup()
+            () => this.showPopup(false)
         );
         this.on(
             'mouseout',
-            () => this.hidePopup()
+            () => this.hidePopup(false)
         );
 
         this.on(
@@ -64,16 +66,19 @@ export abstract class DelayMapMarker<D> extends Marker implements Translatable {
     }
 
 
-    hidePopup(): void {
-        this.delaymap.closePopup();
+    hidePopup(force: boolean): void {
+        if (!this.clicked || force) {
+            this.delaymap.closePopup();
+        }
     }
 
-    showPopup(): void {
+    showPopup(clicked: boolean): void {
+        this.clicked = clicked;
         this.popup.openOn(this.delaymap);
     }
 
     onClick(): void {
-        this.showPopup();
+        this.showPopup(true);
     }
 
     abstract createPopup(): Popup;

@@ -130,7 +130,7 @@ export class DelayMap extends Map {
         this.legend.onLanguageChanged();
         this.stats.onLanguageChanged();
 
-        this.getTrains();
+        this.update();
     }
 
     update(): void {
