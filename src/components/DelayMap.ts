@@ -10,7 +10,6 @@ import {
 
 import {
     Control,
-    LayerGroup,
     Map,
     TileLayer
 } from 'leaflet';
@@ -20,6 +19,7 @@ import {Legend} from './controls/Legend';
 import {RouteLayer} from './layers/RouteLayer';
 import {Stats} from './controls/Stats';
 import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
+import {WorksLayer} from './layers/WorksLayer';
 import {WorksMarker} from './markers/WorksMarker';
 import i18next from 'i18next';
 
@@ -28,7 +28,7 @@ export class DelayMap extends Map {
 
     trainMarkerLayer: TrainMarkerLayer;
     routeLayer: RouteLayer;
-    worksLayer: LayerGroup;
+    worksLayer: WorksLayer;
 
     legend: Legend;
     stats: Stats;
@@ -84,7 +84,7 @@ export class DelayMap extends Map {
         this.addLayer(this.routeLayer);
 
         // Add layer for works
-        this.worksLayer = new LayerGroup();
+        this.worksLayer = new WorksLayer();
         this.addLayer(this.worksLayer);
 
         // TODO: translate this control
@@ -143,9 +143,9 @@ export class DelayMap extends Map {
         // eslint-disable-next-line no-console
         console.error(error);
         this.stats.setError(error);
-        this.clearRoutes();
-        this.clearTrainMarkerLayer();
-        this.clearWorksLayer();
+        this.routeLayer.clear();
+        this.trainMarkerLayer.clear();
+        this.worksLayer.clear();
     }
 
     getTrains(): void {
@@ -156,7 +156,7 @@ export class DelayMap extends Map {
     }
 
     drawWorksData(works: APIWorksData): void {
-        this.clearWorksLayer();
+        this.worksLayer.clear();
 
         works.forEach((work) => {
             new WorksMarker(work, this).addTo(this.worksLayer);
@@ -164,26 +164,12 @@ export class DelayMap extends Map {
     }
 
     drawTrainsData(trains: APITrainData): void {
-        this.clearTrainMarkerLayer();
+        this.trainMarkerLayer.clear();
         this.stats.setData(trains);
         this.trainMarkerLayer.drawTrains(
             trains,
             this,
             (stops) => this.routeLayer.drawStops(stops)
         );
-    }
-
-    clearRoutes(): void {
-        this.routeLayer.clear();
-    }
-
-    clearTrainMarkerLayer(): void {
-        this.trainMarkerLayer.clear();
-    }
-
-    clearWorksLayer(): void {
-        this.worksLayer.remove();
-        this.worksLayer = new LayerGroup();
-        this.addLayer(this.worksLayer);
     }
 }
