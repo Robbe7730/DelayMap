@@ -17,7 +17,10 @@ The API can be found at <https://github.com/Robbe7730/DelayMapI>
 ```json
 {
     "API_URL": "http://localhost:8000",
-    "MT_KEY": "Your_Maptiler_Key"
+    "DEFAULT_CENTER_X": 50.502,
+    "DEFAULT_CENTER_Y": 4.335,
+    "DEFAULT_ZOOM": 8
+    "MT_KEY": "Your_Maptiler_Key",
 }
 ```
 
