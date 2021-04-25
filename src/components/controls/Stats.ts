@@ -97,7 +97,7 @@ export class Stats extends Control implements Translatable {
     }
 
     updateContent(): HTMLElement {
-        this.div = this.div || DomUtil.create('div', 'info legend');
+        this.div = this.div || DomUtil.create('div', 'info');
 
         switch (this.data.type) {
         case StatsDataType.StatsData:
@@ -121,7 +121,6 @@ export class Stats extends Control implements Translatable {
             break;
         case StatsDataType.LoadingData:
             this.div.classList.remove('error');
-            // TODO: why does this overflow?
             this.div.innerHTML = `<i>${i18next.t('stats.loading')}</i><br>`;
             break;
         case StatsDataType.ErrorData:
