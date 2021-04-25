@@ -31,7 +31,7 @@ export class TrainMarker extends DelayMapMarker<TrainData> {
         })
             .setLatLng(this.getLatLon(this.data))
             .setContent(`<strong>${this.data.name}</strong>: ` +
-                `+${formatDelay(getDelay(this.data))} min<br>` +
+                `+${formatDelay(getDelay(this.data))}<br>` +
                 `${i18next.t('trainMarker.nextStop')}: ${name}`);
     }
 

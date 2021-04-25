@@ -19,6 +19,10 @@ export function getColor(train: TrainData): string {
             : 'red';
 }
 
+/*
+ * It may be a good idea to combine this into i18next:
+ * https://www.i18next.com/translation-function/formatting
+ */
 export function formatDelay(delay: number): string {
     const delayMinutes = Math.floor(delay / 60);
     const delaySeconds = Math.round(delay % 60);
@@ -29,6 +33,8 @@ export function formatDelay(delay: number): string {
     } else {
         delayFormatted += `${delaySeconds}`;
     }
+
+    delayFormatted += ' min';
 
     return delayFormatted;
 }
