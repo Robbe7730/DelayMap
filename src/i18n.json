@@ -27,6 +27,11 @@
             },
             "trainMarker": {
                 "nextStop": "Next stop"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Routes",
+                "works": "Works"
             }
         }
     },
@@ -58,7 +63,13 @@
             },
             "trainMarker": {
                 "nextStop": "Volgende halte"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Routes",
+                "works": "Werken"
             }
+
         }
     }
 }

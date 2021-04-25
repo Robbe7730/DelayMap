@@ -9,12 +9,12 @@ import {
 } from '../config.json';
 
 import {
-    Control,
     Map,
     TileLayer
 } from 'leaflet';
 
 import {LanguageSelector} from './controls/LanguageSelector';
+import {LayerControl} from './controls/LayerControl';
 import {Legend} from './controls/Legend';
 import {RouteLayer} from './layers/RouteLayer';
 import {Stats} from './controls/Stats';
@@ -33,6 +33,7 @@ export class DelayMap extends Map {
     legend: Legend;
     stats: Stats;
     languageSelect: LanguageSelector;
+    layerControl: LayerControl;
 
     constructor() {
         super('leafletMap');
@@ -88,21 +89,13 @@ export class DelayMap extends Map {
         this.worksLayer = new WorksLayer();
         this.addLayer(this.worksLayer);
 
-        // TODO: translate this control
-
         // Add the layer control box
-        this.addControl(new Control.Layers(
-            {},
-            {
-                'OpenRailwayMap': this.openrailwaymap,
-                'Routes': this.routeLayer,
-                'Works': this.worksLayer
-            },
-            {
-                'collapsed': false,
-                'position': 'topleft'
-            }
-        ));
+        this.layerControl = new LayerControl(
+            this.openrailwaymap,
+            this.routeLayer,
+            this.worksLayer
+        );
+        this.addControl(this.layerControl);
 
         // Add a language selector
         this.languageSelect = new LanguageSelector((lang) =>
@@ -130,6 +123,7 @@ export class DelayMap extends Map {
         this.legend.onLanguageChanged();
         this.stats.onLanguageChanged();
         this.languageSelect.onLanguageChanged();
+        this.layerControl.onLanguageChanged();
 
         this.update();
     }
