@@ -7,6 +7,7 @@
 import * as i18n from './i18n.json';
 
 import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
 import 'leaflet';
 // eslint-disable-next-line sort-imports
@@ -20,26 +21,30 @@ declare global {
 }
 
 function onLoad() {
-    i18next.init({
-        'lng': 'nl',
-        'debug': false,
-        'supportedLngs': [
-            'en',
-            'nl',
-            'dev'
+    i18next.use(LanguageDetector)
+        .init({
+            'debug': false,
+            'supportedLngs': [
+                'en',
+                'nl',
+                'dev'
             // TODO: fr and de
-        ],
-        'resources': i18n
-    }).then(() => {
-        const map = new DelayMap();
+            ],
+            'detection': {
+                'caches': []
+            },
+            'resources': i18n
+        })
+        .then(() => {
+            const map = new DelayMap();
 
-        // Update every 5 seconds
-        map.update();
-        setInterval(
-            () => map.update(),
-            5000
-        );
-    });
+            // Update every 5 seconds
+            map.update();
+            setInterval(
+                () => map.update(),
+                5000
+            );
+        });
 }
 
 window.onLoad = onLoad;
