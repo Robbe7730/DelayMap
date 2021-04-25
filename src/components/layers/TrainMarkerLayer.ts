@@ -1,4 +1,6 @@
+import {APITrainData, StopTime} from '../../API';
 import {DivIcon, Marker, MarkerClusterGroup, Point} from 'leaflet';
+import {DelayMap} from '../DelayMap';
 import {TrainMarker} from '../markers/TrainMarker';
 import {getDelay} from '../../Util';
 
@@ -34,5 +36,20 @@ export class TrainMarkerLayer extends MarkerClusterGroup {
                 });
             }
         });
+    }
+
+    drawTrains(
+        trains: APITrainData,
+        delaymap: DelayMap,
+        drawRoute: (stops: StopTime[]) => void
+    ): void {
+        this.clear();
+
+        trains.map((train) =>
+            new TrainMarker(train, delaymap, drawRoute).addTo(this));
+    }
+
+    clear(): void {
+        this.removeLayers(this.getLayers());
     }
 }

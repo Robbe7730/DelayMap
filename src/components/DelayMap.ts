@@ -19,7 +19,6 @@ import {LanguageSelector} from './controls/LanguageSelector';
 import {Legend} from './controls/Legend';
 import {RouteLayer} from './layers/RouteLayer';
 import {Stats} from './controls/Stats';
-import {TrainMarker} from './markers/TrainMarker';
 import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
 import {WorksMarker} from './markers/WorksMarker';
 import i18next from 'i18next';
@@ -167,22 +166,19 @@ export class DelayMap extends Map {
     drawTrainsData(trains: APITrainData): void {
         this.clearTrainMarkerLayer();
         this.stats.setData(trains);
-
-        trains.forEach((train) => {
-            new TrainMarker(train, this, (stops) =>
-                this.routeLayer.drawStops(stops))
-                .addTo(this.trainMarkerLayer);
-        });
+        this.trainMarkerLayer.drawTrains(
+            trains,
+            this,
+            (stops) => this.routeLayer.drawStops(stops)
+        );
     }
 
     clearRoutes(): void {
-        this.routeLayer.clearRoutes();
+        this.routeLayer.clear();
     }
 
     clearTrainMarkerLayer(): void {
-        this.trainMarkerLayer.remove();
-        this.trainMarkerLayer = new TrainMarkerLayer();
-        this.addLayer(this.trainMarkerLayer);
+        this.trainMarkerLayer.clear();
     }
 
     clearWorksLayer(): void {

@@ -12,7 +12,7 @@ export class RouteLayer extends LayerGroup {
     }
 
     drawStops(stops: StopTime[]): void {
-        this.clearRoutes();
+        this.clear();
         this.lastRoute = new Polyline(stops
             .filter((stop: StopTime):stop is FullStopTime =>
                 typeof stop.lat !== 'undefined' &&
@@ -24,9 +24,11 @@ export class RouteLayer extends LayerGroup {
             .addTo(this);
     }
 
-    clearRoutes(): void {
+    clear(): void {
+        this.getLayers().forEach((layer) => this.removeLayer(layer));
         if (this.lastRoute) {
             this.lastRoute.remove();
+            delete this.lastRoute;
         }
     }
 }
