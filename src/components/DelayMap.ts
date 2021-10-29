@@ -46,6 +46,10 @@ export class DelayMap extends Map {
             DEFAULT_ZOOM
         );
 
+        // Limit the zoom levels to make the icons presentable
+        this.setMinZoom(4);
+        this.setMaxZoom(14);
+
         // Add background layer
         this.addLayer(new TileLayer(
             `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${
@@ -113,7 +117,10 @@ export class DelayMap extends Map {
         // Clear the routes when just the map is clicked
         this.on(
             'click',
-            () => this.routeLayer.clear()
+            () => {
+                this.routeLayer.clear();
+                console.log(this.getZoom());
+            }
         );
     }
 
