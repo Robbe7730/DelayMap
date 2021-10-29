@@ -1,8 +1,9 @@
-import {Control, DomUtil} from 'leaflet';
+import {DomUtil} from 'leaflet';
 import {Translatable} from '../Translatable';
 import i18next from 'i18next';
+import { DelayMapControl } from './DelayMapControl';
 
-export class Legend extends Control implements Translatable {
+export class Legend extends DelayMapControl implements Translatable {
     div: HTMLElement;
 
     constructor() {

@@ -32,6 +32,13 @@
                 "openrailwaymap": "OpenRailwayMap",
                 "routes": "Routes",
                 "works": "Works"
+            },
+            "info": {
+                "about": "About DelayMap",
+                "title": "Welcome to DelayMap!",
+                "description": "DelayMap is a tool to visualize the Belgian trains and their delay. The position of the train is an estimation based on the previous and next stops of the train and how long ago it has left the previous station. The color of the train is defined by the delay of that train. If it is running perfectly on time, it will show a green icon. If it runs at a delay less than 6 minutes, it is shown in orange and if it has more than 6 minutes delay, it is shown in red.",
+                "github": "Find me on GitHub!",
+                "warning-unofficial": "WARNING: DelayMap is not endorsed by NMBS/SNCB, it only uses their open data to create this visualization."
             }
         }
     },
@@ -68,8 +75,14 @@
                 "openrailwaymap": "OpenRailwayMap",
                 "routes": "Routes",
                 "works": "Werken"
+            },
+            "info": {
+                "about": "Over DelayMap",
+                "title": "Welkom bij DelayMap!",
+                "description": "DelayMap is een visualisatie van de Belgische treinen en hun vertraging. De positie van de trein wordt bepaald aan de hand van het vorige en volgende station en hoe lang geleden de trein het vorige station verlaten heeft. De kleur van de trein wordt bepaald door de vertraging van de trein. Als de trein perfect op tijd is, wordt deze met een groen icoon weergegeven. Als de trein minder dan 6 minuten vertraging heeft, zal hij in het oranje getoond worden en bij meer dan 6 minuten vertraging in het rood.",
+                "github": "Vind me op GitHub!",
+                "warning-unofficial": "OPGELET: DelayMap is geen officiele applicatie van NMBS, het gebruikt enkel hun open data om deze visualisatie te tonen."
             }
-
         }
     }
 }

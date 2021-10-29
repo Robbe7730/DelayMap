@@ -1,9 +1,10 @@
-import {Control, DomUtil} from 'leaflet';
+import {DomUtil} from 'leaflet';
 import {formatDelay, getDelay} from '../../Util';
 
 import {APITrainData} from '../../API';
 import {Translatable} from '../Translatable';
 import i18next from 'i18next';
+import { DelayMapControl } from './DelayMapControl';
 
 enum StatsDataType {
     StatsData,
@@ -29,7 +30,7 @@ interface LoadingData {
     type: StatsDataType.LoadingData;
 }
 
-export class Stats extends Control implements Translatable {
+export class Stats extends DelayMapControl implements Translatable {
     data: StatsData | ErrorData | LoadingData;
     div: HTMLElement;
 

@@ -9,6 +9,7 @@ import {
 } from '../config.json';
 
 import {
+    DomUtil,
     Map,
     TileLayer
 } from 'leaflet';
@@ -22,6 +23,12 @@ import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
 import {WorksLayer} from './layers/WorksLayer';
 import {WorksMarker} from './markers/WorksMarker';
 import i18next from 'i18next';
+import { InfoButton } from './controls/InfoButton';
+import { DelayMapControlPosition } from './controls/DelayMapControl';
+
+type ControlPositions = {
+    [key in DelayMapControlPosition]: HTMLElement;
+};
 
 export class DelayMap extends Map {
     openrailwaymap: TileLayer;
@@ -34,6 +41,10 @@ export class DelayMap extends Map {
     stats: Stats;
     languageSelect: LanguageSelector;
     layerControl: LayerControl;
+    infoButton: InfoButton;
+
+    declare _controlContainer?: HTMLElement;
+    declare _controlCorners: ControlPositions;
 
     constructor() {
         super('leafletMap');
@@ -110,6 +121,10 @@ export class DelayMap extends Map {
         this.legend = new Legend();
         this.addControl(this.legend);
 
+        // Add the information button
+        this.infoButton = new InfoButton();
+        this.addControl(this.infoButton);
+
         // Add the stats
         this.stats = new Stats();
         this.addControl(this.stats);
@@ -117,20 +132,28 @@ export class DelayMap extends Map {
         // Clear the routes when just the map is clicked
         this.on(
             'click',
-            () => {
-                this.routeLayer.clear();
-                console.log(this.getZoom());
-            }
+            () => this.routeLayer.clear()
         );
+
+        // Add 'center' as a 'position' option
+        this.addCustomPositions();
+    }
+
+    addCustomPositions() {
+        const centerElement = DomUtil.create('div', 'leaflet-center', this._controlContainer);
+
+        this._controlCorners["center"] = centerElement;
     }
 
     setLanguage(lang: string): void {
         i18next.changeLanguage(lang);
 
+        // TODO: Find a better way to propagate this.
         this.legend.onLanguageChanged();
         this.stats.onLanguageChanged();
         this.languageSelect.onLanguageChanged();
         this.layerControl.onLanguageChanged();
+        this.infoButton.onLanguageChanged();
 
         this.update();
     }
