@@ -12,7 +12,7 @@ The API can be found at <https://github.com/Robbe7730/DelayMapI>
 ## Running the frontend
 
 1. Make sure [the API](https://github.com/Robbe7730/DelayMapI) is running
-2. Create a config file in `src/config.json` as follows:
+2. Create a config file in `config/config.json` as follows:
 
 ```json
 {

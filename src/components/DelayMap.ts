@@ -1,14 +1,6 @@
 import {APITrainData, APIWorksData} from '../API';
 
 import {
-    API_URL,
-    DEFAULT_CENTER_X,
-    DEFAULT_CENTER_Y,
-    DEFAULT_ZOOM,
-    MT_KEY
-} from '../config.json';
-
-import {
     DomUtil,
     Map,
     TileLayer
@@ -24,6 +16,7 @@ import {Stats} from './controls/Stats';
 import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
 import {WorksLayer} from './layers/WorksLayer';
 import {WorksMarker} from './markers/WorksMarker';
+import {getConfig} from '../Config';
 import i18next from 'i18next';
 
 type ControlPositions = {
@@ -49,31 +42,36 @@ export class DelayMap extends Map {
     constructor() {
         super('leafletMap');
 
-        this.setView(
-            [
-                DEFAULT_CENTER_X,
-                DEFAULT_CENTER_Y
-            ],
-            DEFAULT_ZOOM
-        );
+        getConfig().then((config) => {
+            this.setView(
+                [
+                    config.DEFAULT_CENTER_X,
+                    config.DEFAULT_CENTER_Y
+                ],
+                config.DEFAULT_ZOOM
+            );
+        });
 
         // Limit the zoom levels to make the icons presentable
         this.setMinZoom(4);
         this.setMaxZoom(14);
 
-        // Add background layer
-        this.addLayer(new TileLayer(
-            `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${
-                MT_KEY
-            }`,
-            {
-                'attribution':
-                '<a href="https://www.maptiler.com/copyright/"' +
-                'target="_blank">&copy; MapTiler</a> <a ' +
-                'href="https://www.openstreetmap.org/copyright"' +
-                'target="_blank">&copy; OpenStreetMap contributors</a>'
-            }
-        ));
+
+        getConfig().then((config) => {
+            // Add background layer
+            this.addLayer(new TileLayer(
+                `https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=${
+                    config.MT_KEY
+                }`,
+                {
+                    'attribution':
+                    '<a href="https://www.maptiler.com/copyright/"' +
+                    'target="_blank">&copy; MapTiler</a> <a ' +
+                    'href="https://www.openstreetmap.org/copyright"' +
+                    'target="_blank">&copy; OpenStreetMap contributors</a>'
+                }
+            ));
+        });
 
 
         // Add OpenRailwayMap layer
@@ -168,10 +166,11 @@ export class DelayMap extends Map {
     }
 
     getWorks(): void {
-        fetch(`${API_URL}/works?language=${i18next.language}`)
-            .then((res) => res.json())
-            .then((data) => this.drawWorksData(data))
-            .catch((err) => this.handleError(err));
+        getConfig().then((config) =>
+            fetch(`${config.API_URL}/works?language=${i18next.language}`)
+                .then((res) => res.json())
+                .then((data) => this.drawWorksData(data))
+                .catch((err) => this.handleError(err)));
     }
 
     handleError(error: Error): void {
@@ -184,10 +183,11 @@ export class DelayMap extends Map {
     }
 
     getTrains(): void {
-        fetch(`${API_URL}/trains?language=${i18next.language}`)
-            .then((res) => res.json())
-            .then((data) => this.drawTrainsData(data))
-            .catch((err) => this.handleError(err));
+        getConfig().then((config) =>
+            fetch(`${config.API_URL}/trains?language=${i18next.language}`)
+                .then((res) => res.json())
+                .then((data) => this.drawTrainsData(data))
+                .catch((err) => this.handleError(err)));
     }
 
     drawWorksData(works: APIWorksData): void {

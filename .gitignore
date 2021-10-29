@@ -116,4 +116,4 @@ dist
 .pnp.*
 
 # Config file
-src/config.json
+config/config.json
