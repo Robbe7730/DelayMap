@@ -1,0 +1,108 @@
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+div .error {
+    line-height: 18px;
+    color: #ffffff;
+    background: #cc0000;
+}
+
+.error a {
+    line-height: 18px;
+    color: #ffffff;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    color: #777;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+
+button {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    color: #777;
+    border: none;
+
+}
+
+select {
+    padding: 3px 4px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    color: #777;
+}
+
+.leaflet-control-layers {
+    font: 14px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    border-radius: 5px;
+    color: #777;
+}
+
+.leaflet-control-container {
+    width: 100%;
+    height: 100%;
+}
+
+.leaflet-center {
+    width: 100%;
+    height: 100%;
+}
+
+.leaflet-center > .leaflet-control {
+    margin: auto;
+    float: none;
+    z-index: 1100;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.delaymap-info {
+    height: 75%;
+    width: 75%;
+    background: rgba(255, 255, 255, 1);
+}
+
+.delaymap-info > *{
+    margin: 30px;
+}
+
+.hidden {
+    display: none;
+}
