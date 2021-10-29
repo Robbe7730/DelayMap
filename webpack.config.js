@@ -22,7 +22,6 @@ module.exports = {
           { from: "static", to: "static" },
           { from: "src/index.html", to: "" },
           { from: "src/style.css", to: "" },
-          { from: "config/config.json", to: "" },
         ],
       }),
     ],
