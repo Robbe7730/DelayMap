@@ -1,6 +1,6 @@
+import {DelayMapControl} from './DelayMapControl';
 import {Translatable} from '../Translatable';
 import i18next from 'i18next';
-import { DelayMapControl } from './DelayMapControl';
 
 export class LanguageSelector extends DelayMapControl implements Translatable {
     setLanguage: (newLang: string) => void;

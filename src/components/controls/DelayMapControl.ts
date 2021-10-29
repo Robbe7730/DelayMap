@@ -1,5 +1,5 @@
-import { Control, ControlOptions, ControlPosition } from "leaflet";
-import { DelayMap } from "../DelayMap";
+import {Control, ControlOptions, ControlPosition} from 'leaflet';
+import {DelayMap} from '../DelayMap';
 
 export type DelayMapControlPosition = ControlPosition | 'center';
 
@@ -15,24 +15,32 @@ export class DelayMapControl extends Control {
 
     constructor(options?: DelayMapControlOptions) {
         super(options as ControlOptions);
-        this.originalPosition = options ? options["position"] : undefined;
+        if (options) {
+            this.originalPosition = options.position;
+        }
     }
 
     addTo(map: DelayMap): this {
-        if (this.getPosition() === undefined) {
-            this.remove();
-            this._map = map;
-
-            const container = this._container = this.onAdd ? this.onAdd(map) : undefined;
-            const corner = map._controlCorners[this.originalPosition || 'topright'];
-
-            if (corner && container) {
-                corner.appendChild(container);
-            }
-
-            return this;
-        } else {
+        if (this.getPosition()) {
             return super.addTo(map);
         }
+        this.remove();
+        this._map = map;
+
+        let container;
+        if (this.onAdd) {
+            container = this.onAdd(map);
+            this._container = container;
+        }
+
+        const corner = map._controlCorners[
+            this.originalPosition || 'topright'
+        ];
+
+        if (corner && container) {
+            corner.appendChild(container);
+        }
+
+        return this;
     }
 }

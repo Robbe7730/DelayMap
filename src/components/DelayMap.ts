@@ -14,6 +14,8 @@ import {
     TileLayer
 } from 'leaflet';
 
+import {DelayMapControlPosition} from './controls/DelayMapControl';
+import {InfoButton} from './controls/InfoButton';
 import {LanguageSelector} from './controls/LanguageSelector';
 import {LayerControl} from './controls/LayerControl';
 import {Legend} from './controls/Legend';
@@ -23,8 +25,6 @@ import {TrainMarkerLayer} from './layers/TrainMarkerLayer';
 import {WorksLayer} from './layers/WorksLayer';
 import {WorksMarker} from './markers/WorksMarker';
 import i18next from 'i18next';
-import { InfoButton } from './controls/InfoButton';
-import { DelayMapControlPosition } from './controls/DelayMapControl';
 
 type ControlPositions = {
     [key in DelayMapControlPosition]: HTMLElement;
@@ -139,10 +139,14 @@ export class DelayMap extends Map {
         this.addCustomPositions();
     }
 
-    addCustomPositions() {
-        const centerElement = DomUtil.create('div', 'leaflet-center', this._controlContainer);
+    addCustomPositions(): void {
+        const centerElement = DomUtil.create(
+            'div',
+            'leaflet-center',
+            this._controlContainer
+        );
 
-        this._controlCorners["center"] = centerElement;
+        this._controlCorners.center = centerElement;
     }
 
     setLanguage(lang: string): void {

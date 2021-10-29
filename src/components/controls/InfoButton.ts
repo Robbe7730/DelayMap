@@ -1,8 +1,8 @@
-import i18next from "i18next";
-import { DelayMap } from "../DelayMap";
-import { Translatable } from "../Translatable";
-import { DelayMapControl } from "./DelayMapControl";
-import { InfoPanel } from "./InfoPanel";
+import {DelayMap} from '../DelayMap';
+import {DelayMapControl} from './DelayMapControl';
+import {InfoPanel} from './InfoPanel';
+import {Translatable} from '../Translatable';
+import i18next from 'i18next';
 
 export class InfoButton extends DelayMapControl implements Translatable {
     button: HTMLButtonElement;
@@ -24,12 +24,13 @@ export class InfoButton extends DelayMapControl implements Translatable {
         }
     }
 
-    updateButton() {
-        this.button.innerHTML = `<span class="far fa-question-circle"></span> ${i18next.t('info.about')}`;
+    updateButton(): void {
+        const span = '<span class="far fa-question-circle"></span>';
+        this.button.innerHTML = `${span} ${i18next.t('info.about')}`;
         this.button.onclick = () => this.onClick();
     }
 
-    onClick() {
+    onClick(): void {
         if (!this.infoPanel) {
             this.infoPanel = new InfoPanel();
             if (this.map) {
@@ -44,5 +45,4 @@ export class InfoButton extends DelayMapControl implements Translatable {
         this.map = map;
         return this.button;
     }
-
 }

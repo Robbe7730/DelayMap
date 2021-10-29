@@ -1,7 +1,7 @@
-import i18next from "i18next";
-import { DomUtil } from "leaflet";
-import { Translatable } from "../Translatable";
-import { DelayMapControl } from "./DelayMapControl";
+import {DelayMapControl} from './DelayMapControl';
+import {DomUtil} from 'leaflet';
+import {Translatable} from '../Translatable';
+import i18next from 'i18next';
 
 export class InfoPanel extends DelayMapControl implements Translatable {
     content: HTMLElement;
@@ -14,34 +14,42 @@ export class InfoPanel extends DelayMapControl implements Translatable {
         this.visible = false;
     }
 
-    updateContent() {
+    updateContent(): void {
         this.content = DomUtil.create('div', 'info delaymap-info');
 
-        let title = DomUtil.create('h1', '', this.content);
+        const title = DomUtil.create('h1', '', this.content);
         title.innerText = i18next.t('info.title');
 
-        let description = DomUtil.create('div', '', this.content);
+        const description = DomUtil.create('div', '', this.content);
         description.innerText = i18next.t('info.description');
 
-        let warningDiv = DomUtil.create('div', '', this.content);
-        let warning = DomUtil.create('b', '', warningDiv);
+        const warningDiv = DomUtil.create('div', '', this.content);
+        const warning = DomUtil.create('b', '', warningDiv);
         warning.innerText = i18next.t('info.warning-unofficial');
 
-        let github = DomUtil.create('a', '', this.content) as HTMLAnchorElement;
+        const github = DomUtil.create(
+            'a',
+            '',
+            this.content
+        ) as HTMLAnchorElement;
         DomUtil.create('span', 'fab fa-github', github);
-        let githubText = DomUtil.create('span', '', github);
+        const githubText = DomUtil.create('span', '', github);
         githubText.innerText = ` ${i18next.t('info.github')}`;
-        github.href = "https://github.com/Robbe7730/DelayMap/"
-        github.target = "_blank";
+        github.href = 'https://github.com/Robbe7730/DelayMap/';
+        github.target = '_blank';
 
-        let closeIcon = DomUtil.create('a', 'leaflet-popup-close-button', this.content) as HTMLAnchorElement;
-        closeIcon.onclick = (e) => this.onCloseClick(e);
-        closeIcon.innerText = "×";
-        closeIcon.href = "#close";
+        const closeIcon = DomUtil.create(
+            'a',
+            'leaflet-popup-close-button',
+            this.content
+        ) as HTMLAnchorElement;
+        closeIcon.onclick = (event) => this.onCloseClick(event);
+        closeIcon.innerText = '×';
+        closeIcon.href = '#close';
     }
 
-    onCloseClick(e: Event) {
-        e.preventDefault();
+    onCloseClick(event: Event): void {
+        event.preventDefault();
         this.visible = false;
         this.updateVisibility();
     }
@@ -54,7 +62,7 @@ export class InfoPanel extends DelayMapControl implements Translatable {
         return this.content;
     }
 
-    updateVisibility() {
+    updateVisibility(): void {
         if (this.visible) {
             this.content.classList.remove('hidden');
         } else {
@@ -62,7 +70,7 @@ export class InfoPanel extends DelayMapControl implements Translatable {
         }
     }
 
-    toggleVisible() {
+    toggleVisible(): void {
         this.visible = !this.visible;
         this.updateVisibility();
     }
