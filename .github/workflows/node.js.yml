@@ -5,7 +5,7 @@ name: DelayMap
 
 on:
   push:
-    branches: [ 3.0.0 ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -27,3 +27,13 @@ jobs:
       run: npm run build
     - name: Run tests
       run: npm test
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Push to dockerhub
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: Robbe7730/DelayMap:latest
