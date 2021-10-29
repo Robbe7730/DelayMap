@@ -27,8 +27,9 @@ function onLoad() {
             'supportedLngs': [
                 'en',
                 'nl',
+                'fr',
+                'de',
                 'dev'
-            // TODO: fr and de
             ],
             'detection': {
                 'caches': []

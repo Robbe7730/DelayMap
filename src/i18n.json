@@ -38,7 +38,7 @@
                 "title": "Welcome to DelayMap!",
                 "description": "DelayMap is a tool to visualize the Belgian trains and their delay. The position of the train is an estimation based on the previous and next stops of the train and how long ago it has left the previous station. The color of the train is defined by the delay of that train. If it is running perfectly on time, it will show a green icon. If it runs at a delay less than 6 minutes, it is shown in orange and if it has more than 6 minutes delay, it is shown in red.",
                 "github": "Find me on GitHub!",
-                "warning-unofficial": "WARNING: DelayMap is not endorsed by NMBS/SNCB, it only uses their open data to create this visualization."
+                "warning-unofficial": "WARNING: DelayMap is not endorsed by SNCB/NMBS, it only uses their open data to create this visualization."
             }
         }
     },
@@ -84,6 +84,91 @@
                 "warning-unofficial": "OPGELET: DelayMap is geen officiele applicatie van NMBS, het gebruikt enkel hun open data om deze visualisatie te tonen."
             }
         }
+    },
+    "fr": {
+        "translation": {
+            "legend": {
+                "title": "Légende",
+                "green": "Vert: pas de délai",
+                "orange": "Orange: 6 minutes ou moins",
+                "red": "Rouge: plus de 6 minutes"
+            },
+            "error": {
+                "pre": "Impossible de charger les données, si ce problème persiste, veuillez",
+                "file-issue": "ouvrir un ticket sur GitHub",
+                "message": "Message d'erreur"
+            },
+            "stats": {
+                "title": "Statistiques",
+                "average-delay": "Délai moyen",
+                "maximum-delay": "Délai maximum",
+                "green-trains": "Trains 'verts'",
+                "orange-trains": "Trains 'oranges'",
+                "red-trains": "Trains 'rouge'",
+                "total-trains": "Nombre de trains total",
+                "loading": "Chargement..."
+            },
+            "works": {
+                "ending": "Se terminant le"
+            },
+            "trainMarker": {
+                "nextStop": "Prochain arrêt"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Itinéraires",
+                "works": "Travaux"
+            },
+            "info": {
+                "about": "Information DelayMap",
+                "title": "Bienvenue sur DelayMap!",
+                "description": "DelayMap est une visualisation des trains belges et de leurs retards. La position du train est déterminée en fonction de la gare précédente et suivante et depuis combien de temps le train a quitté la gare précédente. La couleur du train est déterminée par le retard du train. Si le train est parfaitement à l'heure, il sera affiché avec une icône verte. Si le train a moins de 6 minutes de retard, il sera affiché en orange et en rouge s'il a plus de 6 minutes de retard.",
+                "github": "Trouvez-moi sur GitHub!",
+                "warning-unofficial": "ATTENTION : DelayMap n'est pas une application officielle de SNCB, il utilise seulement leurs données ouvertes pour afficher cette visualisation."
+            }
+        }
+    },
+    "de": {
+        "translation": {
+            "legend": {
+                "title": "Legende",
+                "green": "Grün: Keine Verzögerung",
+                "orange": "Orange: 6 Minuten oder weniger",
+                "red": "Rot: Mehr als 6 Minuten"
+            },
+            "error": {
+                "pre": "Daten konnten nicht geladen werden. Wenn dieses Problem weiterhin besteht, melden Sie bitte",
+                "file-issue": "ein Problem auf GitHub",
+                "message": "Fehlermeldung"
+            },
+            "stats": {
+                "title": "Statistiken",
+                "average-delay": "Durchschnittliche Verzögerung",
+                "maximum-delay": "Maximale Verzögerung",
+                "green-trains": "'Grüne' Züge",
+                "orange-trains": "'Orange' Züge",
+                "red-trains": "'Rote' Züge",
+                "total-trains": "Gesamtzahl Züge",
+                "loading": "Wird geladen..."
+            },
+            "works": {
+                "ending": "Endet am"
+            },
+            "trainMarker": {
+                "nextStop": "Nächste Station"
+            },
+            "layerControl": {
+                "openrailwaymap": "OpenRailwayMap",
+                "routes": "Routen",
+                "works": "Werke"
+            },
+            "info": {
+                "about": "Über DelayMap",
+                "title": "Willkommen bei DelayMap!",
+                "description": "DelayMap ist ein Tool zur Visualisierung der belgischen Züge und ihrer Verspätung. Die Position des Zuges ist eine Schätzung basierend auf der vorherigen und nächsten Haltestelle des Zuges und wie lange er den vorherigen Bahnhof verlassen hat. Die Farbe des Zuges wird durch die Verspätung dieses Zuges definiert. Wenn es pünktlich läuft, wird ein grünes Symbol angezeigt. Läuft er mit einer Verspätung von weniger als 6 Minuten, wird er orange angezeigt, und wenn er mehr als 6 Minuten Verspätung hat, wird er rot angezeigt.",
+                "github": "Find me on GitHub!",
+                "warning-unofficial": "WARNUNG: DelayMap wird nicht von NMBS/SNCB unterstützt, es verwendet nur deren offene Daten, um diese Visualisierung zu erstellen."
+            }
+        }
     }
 }
-

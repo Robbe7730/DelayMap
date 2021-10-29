@@ -37,8 +37,20 @@ export class LanguageSelector extends DelayMapControl implements Translatable {
         enOption.value = 'en';
         this.optionMap.set('en', enOption);
 
+        const frOption = document.createElement('option');
+        frOption.text = 'Français';
+        frOption.value = 'fr';
+        this.optionMap.set('fr', frOption);
+
+        const deOption = document.createElement('option');
+        deOption.text = 'Deutsch';
+        deOption.value = 'de';
+        this.optionMap.set('de', deOption);
+
         this.select.add(nlOption);
         this.select.add(enOption);
+        this.select.add(frOption);
+        this.select.add(deOption);
 
         this.select.oninput = () => {
             const newLang = this.select.options[
