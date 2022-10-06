@@ -76,7 +76,7 @@ export class DelayMap extends Map {
 
         // Add OpenRailwayMap layer
         this.openrailwaymap = new TileLayer(
-            'http://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
+            'https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png',
             {
                 'attribution':
                 '<a href="https://www.openstreetmap.org/copyright">&copy;' +
