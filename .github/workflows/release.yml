@@ -1,0 +1,35 @@
+name: DelayMap
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: v15
+    - name: Install dependencies
+      run: npm install
+    - name: Setup config.json
+      run: 'echo $CONFIG_JSON > config/config.json'
+      env:
+        CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
+    - name: Build the frontend
+      run: npm run build
+    - name: Run tests
+      run: npm test
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Push to dockerhub
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: robbe7730/delaymap:${{ GITHUB_REF }}
