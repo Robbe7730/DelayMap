@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: npm install
     - name: Setup config.json
-      run: 'echo $CONFIG_JSON > src/config.json'
+      run: 'echo $CONFIG_JSON > config/config.json'
       env:
         CONFIG_JSON: ${{ secrets.CONFIG_JSON }}
     - name: Build the frontend
