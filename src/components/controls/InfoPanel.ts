@@ -15,7 +15,7 @@ export class InfoPanel extends DelayMapControl implements Translatable {
     }
 
     updateContent(): void {
-        this.content = DomUtil.create('div', 'info delaymap-info');
+        DomUtil.empty(this.content);
 
         const title = DomUtil.create('h1', '', this.content);
         title.innerText = i18next.t('info.title');
