@@ -1,6 +1,7 @@
 # DelayMap
 
-[![Frontend](https://github.com/Robbe7730/DelayMap/actions/workflows/node.js.yml/badge.svg)](https://github.com/Robbe7730/DelayMap/actions/workflows/node.js.yml)
+[![Frontend (latest)](https://github.com/Robbe7730/DelayMap/actions/workflows/latest.yml/badge.svg)](https://github.com/Robbe7730/DelayMap/actions/workflows/latest.yml)
+[![Frontend (release)](https://github.com/Robbe7730/DelayMap/actions/workflows/release.yml/badge.svg)](https://github.com/Robbe7730/DelayMap/actions/workflows/release.yml)
 [![Backend](https://github.com/Robbe7730/DelayMapI/actions/workflows/codecov.yml/badge.svg)](https://github.com/Robbe7730/DelayMapI/actions/workflows/codecov.yml)
 
 A map that shows the delays and position of Belgian trains.
