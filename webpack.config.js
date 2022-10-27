@@ -20,7 +20,7 @@ module.exports = {
       new CopyPlugin({
         patterns: [
           { from: "static", to: "static" },
-          { from: "config/config.json", to: "config.json" },
+          { from: "config/config.json", to: "config.json", noErrorOnMissing: true },
           { from: "src/index.html", to: "" },
           { from: "src/style.css", to: "" },
         ],
