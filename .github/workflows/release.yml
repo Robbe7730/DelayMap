@@ -1,4 +1,4 @@
-name: DelayMap
+name: DelayMap (release)
 
 on:
   release:
