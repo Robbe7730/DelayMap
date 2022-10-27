@@ -1,6 +1,6 @@
 {
   "name": "delaymap",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A map that shows the delays and position of Belgian trains",
   "main": "server.js",
   "scripts": {
